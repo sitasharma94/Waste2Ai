@@ -1,0 +1,139 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',sans-serif;
+}
+
+body{
+    background:#F8F5EF;
+}
+
+.container{
+    display:flex;
+    min-height:100vh;
+}
+
+/* Sidebar */
+
+.sidebar{
+    width:190px;
+    background:#6B705C;
+    color:white;
+    padding:30px 20px;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+}
+
+.sidebar h2{
+    font-size:22px;
+    font-weight:600;
+}
+
+.sidebar ul{
+    list-style:none;
+}
+
+.sidebar li{
+    padding:14px 16px;
+    margin-bottom:10px;
+    border-radius:12px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.sidebar li.active{
+    background:#A98467;
+}
+
+.sidebar li:hover{
+    background:#A98467;
+}
+.sidebar a{
+    text-decoration: none;
+    color: inherit;
+}
+.logout{
+    padding:14px 16px;
+    border-radius:12px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.logout:hover{
+    background:#A98467;
+}
+
+/* Main */
+
+.main-content{
+    flex:1;
+    padding:40px;
+}
+
+.main-content h1{
+    color:#3D405B;
+    font-size:36px;
+}
+
+.welcome{
+    color:#8A817C;
+    margin-top:6px;
+    margin-bottom:35px;
+}
+
+/* Cards */
+
+.cards{
+    display:grid;
+    grid-template-columns:repeat(2, 1fr);
+    gap:25px;
+}
+
+.card{
+    width:100%;
+    height:160px;
+    transition:.3s;
+    background:#FFFDF8;
+    border:1px solid #E6DED3;
+    border-radius:20px;
+    padding:25px;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+}
+
+.card:hover{
+    transform:translateY(-4px);
+    box-shadow:0 12px 25px rgba(0,0,0,.08);
+}
+
+.card h3{
+    color:#8A817C;
+    font-weight:500;
+}
+
+.card h2{
+    color:#3D405B;
+    margin-top:15px;
+    font-size:34px;
+}
+
+.analytics{
+    width:100%;
+    height:320px;
+
+    margin-top:30px;
+
+    background:#FFFDF8;
+    border:1px solid #E6DED3;
+    border-radius:20px;
+    padding:25px;
+}

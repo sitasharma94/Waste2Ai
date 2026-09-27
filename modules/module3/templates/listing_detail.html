@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>{{ listing[2] }} - Waste2Value</title>
+<style>
+    * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', Arial, sans-serif; }
+    body { min-height: 100vh; background: #f4f7f5; }
+    .navbar {
+        background: linear-gradient(135deg, #56ab2f, #2e7d32);
+        padding: 16px 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: white;
+    }
+    .navbar .logo { font-size: 20px; font-weight: 700; }
+    .navbar a {
+        background: rgba(255,255,255,0.2);
+        color: white;
+        text-decoration: none;
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+    .content { max-width: 900px; margin: 40px auto; padding: 0 20px; }
+    .detail-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        overflow: hidden;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+    .detail-img { width: 100%; height: 100%; min-height: 300px; object-fit: cover; background: #e8f5e9; }
+    .no-img {
+        min-height: 300px;
+        background: #e8f5e9;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 80px;
+    }
+    .detail-info { padding: 30px; }
+    .category-badge {
+        display: inline-block;
+        background: #e8f5e9;
+        color: #2e7d32;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        margin-bottom: 12px;
+        text-transform: capitalize;
+    }
+    .detail-info h2 { color: #222; margin-bottom: 10px; font-size: 24px; }
+    .detail-price { font-size: 28px; font-weight: 700; color: #2e7d32; margin-bottom: 15px; }
+    .detail-meta { font-size: 13px; color: #888; margin-bottom: 15px; }
+    .detail-desc { color: #555; font-size: 14px; line-height: 1.6; margin-bottom: 25px; }
+    .offer-box { background: #f4f7f5; padding: 20px; border-radius: 12px; }
+    .offer-box h3 { font-size: 15px; margin-bottom: 12px; color: #333; }
+    .offer-box form { display: flex; gap: 10px; }
+    .offer-box input {
+        flex: 1;
+        padding: 10px 12px;
+        border: 1.5px solid #ddd;
+        border-radius: 8px;
+        font-size: 14px;
+    }
+    .offer-box button {
+        padding: 10px 20px;
+        background: linear-gradient(135deg, #56ab2f, #2e7d32);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+    .own-listing-note {
+        background: #fff3e0;
+        color: #e65100;
+        padding: 12px;
+        border-radius: 8px;
+        font-size: 13px;
+        text-align: center;
+    }
+    .success-msg {
+        background: #e8f5e9;
+        color: #2e7d32;
+        padding: 12px;
+        border-radius: 8px;
+        font-size: 13px;
+        text-align: center;
+        margin-bottom: 15px;
+    }
+    @media (max-width: 700px) { .detail-card { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<div class="navbar">
+    <div class="logo">♻️ Waste2Value</div>
+    <a href="/marketplace">← Back to Marketplace</a>
+</div>
+
+<div class="content">
+    <div class="detail-card">
+        {% if listing[7] %}
+            <img class="detail-img" src="{{ url_for('static', filename='uploads/' + listing[7]) }}">
+        {% else %}
+            <div class="no-img">♻️</div>
+        {% endif %}
+
+        <div class="detail-info">
+            <span class="category-badge">{{ listing[3] }}</span>
+            <h2>{{ listing[2] }}</h2>
+            <div class="detail-price">₹{{ listing[5] }}</div>
+            <div class="detail-meta">Condition: {{ listing[6] }}</div>
+            <p class="detail-desc">{{ listing[4] or "No description provided." }}</p>
+
+            {% if offer_sent %}
+                <div class="success-msg">✅ Your offer has been sent to the seller!</div>
+            {% endif %}
+
+            {% if listing[1] == session_user_id %}
+                <div class="own-listing-note">This is your own listing.</div>
+            {% else %}
+                <div class="offer-box">
+                    <h3>Make an Offer</h3>
+                    <form method="POST" action="/offer/new/{{ listing[0] }}">
+                        <input type="number" step="0.01" name="offer_price" placeholder="Your offer (₹)" required>
+                        <button type="submit">Send Offer</button>
+                    </form>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

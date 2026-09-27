@@ -1,0 +1,5 @@
+Flask
+Flask-MySQLdb
+Flask-Bcrypt
+opencv-python-headless
+numpy

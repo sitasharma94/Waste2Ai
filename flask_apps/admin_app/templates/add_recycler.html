@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Recycler - W2V</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='recyclers.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    {% set active = 'recyclers' %}
+    {% include 'partials/sidebar.html' %}
+
+    <div class="main-content">
+
+        <div class="top-bar">
+            <div>
+                <h1>Add Recycler</h1>
+                <p class="subtitle">New recyclers start as Pending until approved</p>
+            </div>
+        </div>
+
+        {% include 'partials/flash.html' %}
+
+        <form class="form-card" action="{{ url_for('add_recycler') }}" method="POST" novalidate>
+
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <label for="recycler_name">Recycler Name</label>
+            <input type="text" id="recycler_name" name="recycler_name" maxlength="100" required
+                   value="{{ form.recycler_name or '' }}" class="{{ 'has-error' if errors.recycler_name }}">
+            {% if errors.recycler_name %}<p class="field-error">{{ errors.recycler_name }}</p>{% endif %}
+
+            <label for="company">Company</label>
+            <input type="text" id="company" name="company" maxlength="150"
+                   value="{{ form.company or '' }}" class="{{ 'has-error' if errors.company }}">
+            {% if errors.company %}<p class="field-error">{{ errors.company }}</p>{% endif %}
+
+            <label for="location">Location</label>
+            <input type="text" id="location" name="location" maxlength="100"
+                   value="{{ form.location or '' }}" class="{{ 'has-error' if errors.location }}">
+            {% if errors.location %}<p class="field-error">{{ errors.location }}</p>{% endif %}
+
+            <div class="form-actions">
+                <button type="submit"><i class="bi bi-plus-lg"></i> Add Recycler</button>
+                <a href="{{ url_for('recyclers') }}">Cancel</a>
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+</body>
+</html>

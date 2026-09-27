@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+
+<body>
+
+{#
+  Each stat group is None when its table is not present in the connected
+  database yet; the card then shows "—" instead of a made-up number.
+#}
+{% macro stat(group, key='total') -%}
+    {{ stats[group][key] if stats[group] is not none else '—' }}
+{%- endmacro %}
+
+<div class="container">
+
+    {% set active = 'dashboard' %}
+    {% include 'partials/sidebar.html' %}
+
+
+    <!-- Main Content -->
+
+    <div class="main-content">
+
+        <h1>Dashboard</h1>
+        <p class="welcome">Welcome back, {{ g.admin.username }}</p>
+
+        {% include 'partials/flash.html' %}
+
+        <div class="cards">
+
+            <div class="card">
+                <h3>Users</h3>
+                <h2>{{ stat('users') }}</h2>
+                <p class="card-sub">
+                    {% if stats.users %}{{ stats.users.buyers }} buyers · {{ stats.users.sellers }} sellers{% else %}Not available yet{% endif %}
+                </p>
+            </div>
+
+            <div class="card">
+                <h3>Listings</h3>
+                <h2>{{ stat('listings') }}</h2>
+                <p class="card-sub">
+                    {% if stats.listings %}{{ stats.listings.available }} available{% else %}Not available yet{% endif %}
+                </p>
+            </div>
+
+            <div class="card">
+                <h3>Recyclers</h3>
+                <h2>{{ stat('recyclers') }}</h2>
+                <p class="card-sub">
+                    {% if stats.recyclers %}{{ stats.recyclers.pending }} pending approval{% else %}Not available yet{% endif %}
+                </p>
+            </div>
+
+            <div class="card">
+                <h3>Complaints</h3>
+                <h2>{{ stat('complaints') }}</h2>
+                <p class="card-sub">
+                    {% if stats.complaints %}{{ stats.complaints.open }} open{% else %}Not available yet{% endif %}
+                </p>
+            </div>
+
+            <div class="card">
+                <h3>Offers</h3>
+                <h2>{{ stat('offers') }}</h2>
+                <p class="card-sub">
+                    {% if stats.offers %}{{ stats.offers.pending }} pending · {{ stats.offers.accepted }} accepted{% else %}Not available yet{% endif %}
+                </p>
+            </div>
+
+            <div class="card">
+                <h3>Pickups</h3>
+                <h2>{{ stat('pickups') }}</h2>
+                <p class="card-sub">
+                    {% if stats.pickups %}{{ stats.pickups.scheduled }} scheduled{% else %}Not available yet{% endif %}
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

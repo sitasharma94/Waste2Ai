@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>My Listings - Waste2Value</title>
+<style>
+    * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', Arial, sans-serif; }
+    body { min-height: 100vh; background: #f4f7f5; }
+
+    .navbar {
+        background: linear-gradient(135deg, #56ab2f, #2e7d32);
+        padding: 16px 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: white;
+    }
+    .navbar .logo { font-size: 20px; font-weight: 700; }
+    .navbar-links { display: flex; gap: 10px; }
+    .navbar a {
+        background: rgba(255,255,255,0.2);
+        color: white;
+        text-decoration: none;
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .content { max-width: 900px; margin: 30px auto; padding: 0 20px; }
+    .content h2 { color: #2e7d32; margin-bottom: 20px; }
+
+    .listing-row {
+        background: white;
+        border-radius: 12px;
+        padding: 18px 20px;
+        margin-bottom: 12px;
+        box-shadow: 0 3px 15px rgba(0,0,0,0.06);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .listing-row .info h3 { font-size: 15px; color: #222; margin-bottom: 4px; }
+    .listing-row .info .meta { font-size: 12px; color: #888; }
+    .listing-row .price { font-size: 16px; font-weight: 700; color: #2e7d32; }
+
+    .status-badge {
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: capitalize;
+        background: #e8f5e9;
+        color: #2e7d32;
+    }
+
+    .row-actions { display: flex; gap: 8px; align-items: center; }
+
+    .btn-view {
+        padding: 7px 14px;
+        background: #e8f5e9;
+        color: #2e7d32;
+        text-decoration: none;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .btn-delete {
+        padding: 7px 14px;
+        background: #fdecea;
+        color: #d32f2f;
+        border: none;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .empty-state { text-align: center; padding: 50px 20px; color: #999; }
+    .empty-state .icon { font-size: 45px; margin-bottom: 15px; }
+</style>
+</head>
+<body>
+
+<div class="navbar">
+    <div class="logo">♻️ Waste2Value</div>
+    <div class="navbar-links">
+        <a href="/dashboard">Dashboard</a>
+        <a href="/listing/new">+ New Listing</a>
+    </div>
+</div>
+
+<div class="content">
+    <h2>My Listings</h2>
+
+    {% if listings %}
+        {% for item in listings %}
+        <div class="listing-row">
+            <div class="info">
+                <h3>{{ item[2] }}</h3>
+                <div class="meta">{{ item[3] }} · ₹{{ item[5] }}</div>
+            </div>
+            <span class="status-badge">{{ item[8] }}</span>
+            <div class="row-actions">
+                <a href="/listing/{{ item[0] }}" class="btn-view">View</a>
+                <form method="POST" action="/listing/delete/{{ item[0] }}" onsubmit="return confirm('Delete this listing?');">
+                    <button type="submit" class="btn-delete">Delete</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="empty-state">
+            <div class="icon">📦</div>
+            <p>You haven't posted any listings yet.</p>
+        </div>
+    {% endif %}
+</div>
+
+</body>
+</html>

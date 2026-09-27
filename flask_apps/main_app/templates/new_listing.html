@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Create Listing - Waste2Value</title>
+<style>
+    * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', Arial, sans-serif; }
+
+    body {
+        min-height: 100vh;
+        background: #f4f7f5;
+    }
+
+    .navbar {
+        background: linear-gradient(135deg, #56ab2f, #2e7d32);
+        padding: 16px 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: white;
+    }
+
+    .navbar .logo { font-size: 20px; font-weight: 700; }
+
+    .navbar a {
+        background: rgba(255,255,255,0.2);
+        color: white;
+        text-decoration: none;
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .content {
+        max-width: 500px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+
+    .form-card {
+        background: white;
+        padding: 35px;
+        border-radius: 16px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    }
+
+    .form-card h2 {
+        color: #2e7d32;
+        margin-bottom: 25px;
+    }
+
+    .form-group { margin-bottom: 18px; }
+
+    label {
+        display: block;
+        font-size: 14px;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 6px;
+    }
+
+    input, select, textarea {
+        width: 100%;
+        padding: 12px 14px;
+        border: 1.5px solid #ddd;
+        border-radius: 8px;
+        font-size: 14px;
+        outline: none;
+        font-family: inherit;
+    }
+
+    input:focus, select:focus, textarea:focus { border-color: #56ab2f; }
+
+    textarea { resize: vertical; min-height: 80px; }
+
+    button {
+        width: 100%;
+        padding: 13px;
+        background: linear-gradient(135deg, #56ab2f, #2e7d32);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 8px;
+    }
+
+    button:hover { opacity: 0.9; }
+</style>
+</head>
+<body>
+
+<div class="navbar">
+    <div class="logo">♻️ Waste2Value</div>
+    <a href="/dashboard">← Back to Dashboard</a>
+</div>
+
+<div class="content">
+    <div class="form-card">
+        <h2>Create New Listing</h2>
+        <form method="POST" action="/listing/new" enctype="multipart/form-data">
+            <div class="form-group">
+                <label>Item Title</label>
+                <input type="text" name="title" placeholder="e.g. Old Plastic Bottles (5kg)" required>
+            </div>
+
+            <div class="form-group">
+                <label>Category</label>
+                <select name="category" required>
+                    <option value="plastic">Plastic</option>
+                    <option value="paper">Paper</option>
+                    <option value="glass">Glass</option>
+                    <option value="metal">Metal</option>
+                    <option value="e-waste">E-Waste</option>
+                    <option value="clothes">Clothes</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Description</label>
+                <textarea name="description" placeholder="Describe the item..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Price (₹)</label>
+                <input type="number" step="0.01" name="price" placeholder="e.g. 150" required>
+            </div>
+
+            <div class="form-group">
+                <label>Condition</label>
+                <select name="item_condition">
+                    <option value="new">New</option>
+                    <option value="used">Used</option>
+                    <option value="damaged">Damaged</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Item Image</label>
+                <input type="file" name="image" accept="image/*">
+            </div>
+
+            <button type="submit">Post Listing</button>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

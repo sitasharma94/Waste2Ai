@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recycler #{{ recycler.id }}</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='recyclers.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <script src="{{ url_for('static', filename='script.js') }}" defer></script>
+</head>
+
+<body>
+
+<div class="container">
+
+    {% set active = 'recyclers' %}
+    {% include 'partials/sidebar.html' %}
+
+    <div class="main-content">
+
+        <div class="top-bar">
+            <div>
+                <h1>Recycler #{{ recycler.id }}</h1>
+                <p class="subtitle">{{ recycler.recycler_name }}</p>
+            </div>
+            <a class="back-link" href="{{ url_for('recyclers') }}"><i class="bi bi-arrow-left"></i> Back to recyclers</a>
+        </div>
+
+        {% include 'partials/flash.html' %}
+
+        <table class="detail-table">
+            <tbody>
+                <tr><th>Recycler Name</th><td>{{ recycler.recycler_name }}</td></tr>
+                <tr><th>Company</th><td>{{ recycler.company or '—' }}</td></tr>
+                <tr><th>Location</th><td>{{ recycler.location or '—' }}</td></tr>
+                <tr>
+                    <th>Status</th>
+                    <td><span class="status {{ recycler.status|lower }}">{{ recycler.status }}</span></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="detail-actions">
+            {% if recycler.status != 'Verified' %}
+            <form class="inline-form" method="POST" action="{{ url_for('approve_recycler', recycler_id=recycler.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="approve-btn">Approve</button>
+            </form>
+            {% endif %}
+            {% if recycler.status != 'Rejected' %}
+            <form class="inline-form" method="POST" action="{{ url_for('reject_recycler', recycler_id=recycler.id) }}"
+                  data-confirm="Reject this recycler?">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="remove-btn">Reject</button>
+            </form>
+            {% endif %}
+            <form class="inline-form" method="POST" action="{{ url_for('remove_recycler', recycler_id=recycler.id) }}"
+                  data-confirm="Permanently remove this recycler?">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="remove-btn">Remove</button>
+            </form>
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

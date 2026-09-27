@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listing #{{ listing.id }}</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='listings.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <script src="{{ url_for('static', filename='script.js') }}" defer></script>
+</head>
+
+<body>
+
+<div class="container">
+
+    {% set active = 'listings' %}
+    {% include 'partials/sidebar.html' %}
+
+    <div class="main-content">
+
+        <div class="top-bar">
+            <div>
+                <h1>Listing #{{ listing.id }}</h1>
+                <p class="subtitle">{{ listing.title }}</p>
+            </div>
+            <a class="back-link" href="{{ url_for('listings') }}"><i class="bi bi-arrow-left"></i> Back to listings</a>
+        </div>
+
+        {% include 'partials/flash.html' %}
+
+        <table class="detail-table">
+            <tbody>
+                <tr><th>Title</th><td>{{ listing.title }}</td></tr>
+                <tr><th>Category</th><td>{{ listing.category|capitalize }}</td></tr>
+                <tr>
+                    <th>Seller</th>
+                    <td>
+                        {% if listing.seller_name %}
+                        {{ listing.seller_name }} <span class="muted">({{ listing.seller_email }})</span>
+                        {% else %}
+                        User #{{ listing.seller_id }}
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr><th>Price</th><td>{{ listing.price|money }}</td></tr>
+                <tr><th>Condition</th><td>{{ listing.item_condition|capitalize if listing.item_condition else '—' }}</td></tr>
+                <tr>
+                    <th>Status</th>
+                    <td>
+                        <span class="status {{ 'active' if listing.status == 'available' else 'archive' }}">
+                            {{ listing.status|capitalize if listing.status else '—' }}
+                        </span>
+                    </td>
+                </tr>
+                <tr><th>Description</th><td class="detail-text">{{ listing.description or '—' }}</td></tr>
+                <tr>
+                    <th>Image</th>
+                    <td>
+                        {% if image_url %}
+                        <img class="listing-image" src="{{ image_url }}" alt="{{ listing.title }}">
+                        <div class="muted">{{ listing.image_path }}</div>
+                        {% elif listing.image_path %}
+                        {{ listing.image_path }} <span class="muted">(image file not found in the main app's uploads)</span>
+                        {% else %}
+                        —
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr><th>Created At</th><td>{{ listing.created_at|datetime }}</td></tr>
+            </tbody>
+        </table>
+
+        <div class="detail-actions">
+            {% if listing.status in hidden_statuses %}
+            <form class="inline-form" method="POST" action="{{ url_for('listing_action', listing_id=listing.id, action='restore') }}"
+                  data-confirm="Restore this listing to the marketplace?">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="return_to" value="view">
+                <button type="submit" class="archive-btn">Restore</button>
+            </form>
+            {% elif listing.status == 'available' %}
+            <form class="inline-form" method="POST" action="{{ url_for('listing_action', listing_id=listing.id, action='remove') }}"
+                  data-confirm="Remove this listing from the marketplace? It is kept and can be restored.">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="return_to" value="view">
+                <button type="submit" class="delete-btn">Remove</button>
+            </form>
+            {% else %}
+            <form class="inline-form" method="POST" action="{{ url_for('listing_action', listing_id=listing.id, action='archive') }}"
+                  data-confirm="Archive this listing? It can be restored later.">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="return_to" value="view">
+                <button type="submit" class="archive-btn">Archive</button>
+            </form>
+            {% endif %}
+        </div>
+
+        <h2 class="section-title">Offers on this listing</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Buyer</th>
+                    <th>Offer Price</th>
+                    <th>Status</th>
+                    <th>Pickup</th>
+                    <th>Created At</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if offers is none %}
+                <tr><td colspan="6" class="empty-state">Offer data is not available in the connected database yet.</td></tr>
+                {% else %}
+                {% for offer in offers %}
+                <tr>
+                    <td>{{ offer.id }}</td>
+                    <td>{{ offer.buyer_name or '—' }}</td>
+                    <td>{{ offer.offer_price|money }}</td>
+                    <td>{{ offer.status|capitalize if offer.status else '—' }}</td>
+                    <td>
+                        {% if offer.pickup_date %}
+                        {{ offer.pickup_date|datetime('%d %b %Y') }} <span class="muted">({{ offer.pickup_status }})</span>
+                        {% else %}
+                        —
+                        {% endif %}
+                    </td>
+                    <td>{{ offer.created_at|datetime }}</td>
+                </tr>
+                {% else %}
+                <tr><td colspan="6" class="empty-state">No offers have been made on this listing.</td></tr>
+                {% endfor %}
+                {% endif %}
+            </tbody>
+        </table>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

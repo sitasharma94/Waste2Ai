@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recyclers</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='recyclers.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <script src="{{ url_for('static', filename='script.js') }}" defer></script>
+</head>
+
+<body>
+
+<div class="container">
+
+    {% set active = 'recyclers' %}
+    {% include 'partials/sidebar.html' %}
+    <!-- Main Content -->
+
+    <div class="main-content">
+
+        <div class="top-bar">
+
+            <h1>Recyclers</h1>
+
+            <form class="controls" method="GET" action="{{ url_for('recyclers') }}">
+
+                <input type="text" name="q" value="{{ q }}" maxlength="100" placeholder="Search recycler">
+
+                <button type="button" data-href="{{ url_for('add_recycler') }}">Add Recycler</button>
+
+            </form>
+
+        </div>
+
+        {% if q %}
+        <p class="search-summary">
+            {{ recyclers|length }} result{{ '' if recyclers|length == 1 else 's' }} for "{{ q }}" ·
+            <a href="{{ url_for('recyclers') }}">Clear search</a>
+        </p>
+        {% endif %}
+
+        {% include 'partials/flash.html' %}
+
+        <table>
+
+            <thead>
+
+                <tr>
+                    <th>ID</th>
+                    <th>Recycler Name</th>
+                    <th>Company</th>
+                    <th>Location</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for recycler in recyclers %}
+
+                <tr>
+
+                    <td>{{ recycler.id }}</td>
+                    <td>{{ recycler.recycler_name }}</td>
+                    <td>{{ recycler.company or '—' }}</td>
+                    <td>{{ recycler.location or '—' }}</td>
+
+                    <td>
+                        <span class="status {{ recycler.status|lower }}">{{ recycler.status }}</span>
+                    </td>
+
+                    <td>
+                        <a class="view-btn" href="{{ url_for('view_recycler', recycler_id=recycler.id) }}">View</a>
+
+                        {% if recycler.status != 'Verified' %}
+                        <form class="inline-form" method="POST" action="{{ url_for('approve_recycler', recycler_id=recycler.id) }}">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="approve-btn">Approve</button>
+                        </form>
+                        {% endif %}
+
+                        {% if recycler.status == 'Pending' %}
+                        <form class="inline-form" method="POST" action="{{ url_for('reject_recycler', recycler_id=recycler.id) }}"
+                              data-confirm="Reject recycler '{{ recycler.recycler_name }}'?">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="remove-btn">Reject</button>
+                        </form>
+                        {% else %}
+                        <form class="inline-form" method="POST" action="{{ url_for('remove_recycler', recycler_id=recycler.id) }}"
+                              data-confirm="Permanently remove recycler '{{ recycler.recycler_name }}'?">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="remove-btn">Remove</button>
+                        </form>
+                        {% endif %}
+                    </td>
+
+                </tr>
+
+                {% else %}
+
+                <tr>
+                    <td colspan="6" class="empty-state">
+                        {% if q %}No recyclers match "{{ q }}".{% else %}No recyclers have been added yet.{% endif %}
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+</body>
+</html>

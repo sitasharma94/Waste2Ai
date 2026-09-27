@@ -1,0 +1,56 @@
+    <!-- Sidebar -->
+
+    <div class="sidebar">
+
+        <h2><i class="bi bi-recycle"></i> W2V</h2>
+
+        <ul>
+
+            <li{% if active == 'dashboard' %} class="active"{% endif %}>
+                <a href="{{ url_for('dashboard') }}">
+                <i class="bi bi-grid"></i>
+                Dashboard
+                </a>
+            </li>
+
+            <li{% if active == 'users' %} class="active"{% endif %}>
+                <a href="{{ url_for('users') }}">
+                <i class="bi bi-people"></i>
+                Users
+                </a>
+            </li>
+
+            <li{% if active == 'recyclers' %} class="active"{% endif %}>
+                <a href="{{ url_for('recyclers') }}">
+                <i class="bi bi-recycle"></i>
+                Recyclers
+                </a>
+            </li>
+
+            <li{% if active == 'listings' %} class="active"{% endif %}>
+                <a href="{{ url_for('listings') }}">
+                <i class="bi bi-box-seam"></i>
+                Listings
+                </a>
+            </li>
+
+            <li{% if active == 'complaints' %} class="active"{% endif %}>
+                <a href="{{ url_for('complaints') }}">
+                <i class="bi bi-exclamation-circle"></i>
+                Complaints
+                </a>
+            </li>
+
+        </ul>
+
+        <div class="logout">
+            <form method="POST" action="{{ url_for('logout') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit">
+                    <i class="bi bi-box-arrow-right"></i>
+                    Logout
+                </button>
+            </form>
+        </div>
+
+    </div>

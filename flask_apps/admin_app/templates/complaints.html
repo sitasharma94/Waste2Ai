@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complaints</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='complaints.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <script src="{{ url_for('static', filename='script.js') }}" defer></script>
+</head>
+
+<body>
+
+{% set status_class = {'Open': 'pending', 'Resolved': 'active', 'Archived': 'archive'} %}
+
+<div class="container">
+
+    {% set active = 'complaints' %}
+    {% include 'partials/sidebar.html' %}
+
+    <div class="main-content">
+
+        <div class="top-bar">
+
+            <h1>Complaints</h1>
+
+            <form class="controls" method="GET" action="{{ url_for('complaints') }}">
+
+                <input type="text" name="q" value="{{ q }}" maxlength="100" placeholder="Search complaint...">
+
+                <button type="submit">Search</button>
+
+            </form>
+
+        </div>
+
+        {% if q %}
+        <p class="search-summary">
+            {{ complaints|length }} result{{ '' if complaints|length == 1 else 's' }} for "{{ q }}" ·
+            <a href="{{ url_for('complaints') }}">Clear search</a>
+        </p>
+        {% endif %}
+
+        {% include 'partials/flash.html' %}
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>ID</th>
+                    <th>User</th>
+                    <th>Complaint</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for complaint in complaints %}
+
+                <tr>
+
+                    <td>{{ complaint.id }}</td>
+                    <td>{{ complaint.user_name or ('User #' ~ complaint.user_id) }}</td>
+                    <td>{{ complaint.subject }}</td>
+                    <td>{{ complaint.created_at|datetime('%d %b %Y') }}</td>
+
+                    <td>
+                        <span class="status {{ status_class.get(complaint.status, 'pending') }}">{{ complaint.status }}</span>
+                    </td>
+
+                    <td>
+
+                        <a class="edit-btn" href="{{ url_for('view_complaint', complaint_id=complaint.id) }}">View</a>
+
+                        {% if complaint.status == 'Open' %}
+                        <form class="inline-form" method="POST" action="{{ url_for('resolve_complaint', complaint_id=complaint.id) }}">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="resolve-btn">Resolve</button>
+                        </form>
+                        {% elif complaint.status == 'Resolved' %}
+                        <form class="inline-form" method="POST" action="{{ url_for('archive_complaint', complaint_id=complaint.id) }}"
+                              data-confirm="Archive complaint #{{ complaint.id }}?">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="archive-btn">Archive</button>
+                        </form>
+                        {% endif %}
+
+                    </td>
+
+                </tr>
+
+                {% else %}
+
+                <tr>
+                    <td colspan="6" class="empty-state">
+                        {% if q %}No complaints match "{{ q }}".{% else %}No complaints have been recorded yet.{% endif %}
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+</body>
+</html>

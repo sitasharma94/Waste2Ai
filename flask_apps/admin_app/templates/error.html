@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }} - W2V</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='user.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    {% if session.get('admin_id') %}
+    {% set active = '' %}
+    {% include 'partials/sidebar.html' %}
+    {% endif %}
+
+    <div class="main-content">
+
+        <div class="top-bar">
+            <h1>{{ title }}</h1>
+        </div>
+
+        <div class="flash error">{{ message }}</div>
+
+        <p class="detail-actions">
+            {% if session.get('admin_id') %}
+            <a class="back-link" href="{{ url_for('dashboard') }}"><i class="bi bi-arrow-left"></i> Back to dashboard</a>
+            {% else %}
+            <a class="back-link" href="{{ url_for('login') }}"><i class="bi bi-arrow-left"></i> Go to admin login</a>
+            {% endif %}
+        </p>
+
+    </div>
+
+</div>
+
+</body>
+</html>

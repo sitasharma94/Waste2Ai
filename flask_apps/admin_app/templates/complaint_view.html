@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complaint #{{ complaint.id }}</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='complaints.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <script src="{{ url_for('static', filename='script.js') }}" defer></script>
+</head>
+
+<body>
+
+{% set status_class = {'Open': 'pending', 'Resolved': 'active', 'Archived': 'archive'} %}
+
+<div class="container">
+
+    {% set active = 'complaints' %}
+    {% include 'partials/sidebar.html' %}
+
+    <div class="main-content">
+
+        <div class="top-bar">
+            <div>
+                <h1>Complaint #{{ complaint.id }}</h1>
+                <p class="subtitle">{{ complaint.subject }}</p>
+            </div>
+            <a class="back-link" href="{{ url_for('complaints') }}"><i class="bi bi-arrow-left"></i> Back to complaints</a>
+        </div>
+
+        {% include 'partials/flash.html' %}
+
+        <table class="detail-table">
+            <tbody>
+                <tr>
+                    <th>User</th>
+                    <td>
+                        {% if complaint.user_name %}
+                        {{ complaint.user_name }}
+                        <span class="muted">({{ complaint.user_email }} · {{ complaint.user_role }})</span>
+                        {% else %}
+                        User #{{ complaint.user_id }}
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr><th>Subject</th><td>{{ complaint.subject }}</td></tr>
+                <tr><th>Description</th><td class="detail-text">{{ complaint.description or '—' }}</td></tr>
+                <tr>
+                    <th>Status</th>
+                    <td><span class="status {{ status_class.get(complaint.status, 'pending') }}">{{ complaint.status }}</span></td>
+                </tr>
+                <tr><th>Submitted</th><td>{{ complaint.created_at|datetime }}</td></tr>
+            </tbody>
+        </table>
+
+        <div class="detail-actions">
+            {% if complaint.status == 'Open' %}
+            <form class="inline-form" method="POST" action="{{ url_for('resolve_complaint', complaint_id=complaint.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="return_to" value="view">
+                <button type="submit" class="resolve-btn">Resolve</button>
+            </form>
+            {% endif %}
+            {% if complaint.status != 'Archived' %}
+            <form class="inline-form" method="POST" action="{{ url_for('archive_complaint', complaint_id=complaint.id) }}"
+                  data-confirm="Archive this complaint?">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="return_to" value="view">
+                <button type="submit" class="archive-btn">Archive</button>
+            </form>
+            {% endif %}
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

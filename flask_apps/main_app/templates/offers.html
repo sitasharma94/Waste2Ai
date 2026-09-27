@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>My Offers - Waste2Value</title>
+<style>
+    * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', Arial, sans-serif; }
+    body { min-height: 100vh; background: #f4f7f5; }
+
+    .navbar {
+        background: linear-gradient(135deg, #56ab2f, #2e7d32);
+        padding: 16px 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: white;
+    }
+    .navbar .logo { font-size: 20px; font-weight: 700; }
+    .navbar a {
+        background: rgba(255,255,255,0.2);
+        color: white;
+        text-decoration: none;
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .content { max-width: 900px; margin: 30px auto; padding: 0 20px; }
+
+    .tabs {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .tab {
+        padding: 10px 20px;
+        background: white;
+        border-radius: 8px;
+        text-decoration: none;
+        color: #555;
+        font-size: 14px;
+        font-weight: 600;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .tab.active {
+        background: #2e7d32;
+        color: white;
+    }
+
+    .offer-card {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 15px;
+        box-shadow: 0 3px 15px rgba(0,0,0,0.06);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .offer-left h3 { font-size: 16px; color: #222; margin-bottom: 5px; }
+    .offer-left .meta { font-size: 13px; color: #888; }
+    .offer-left .price { font-size: 18px; font-weight: 700; color: #2e7d32; margin-top: 6px; }
+
+    .status-badge {
+        padding: 5px 14px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: capitalize;
+    }
+
+    .status-pending { background: #fff3e0; color: #e65100; }
+    .status-accepted { background: #e8f5e9; color: #2e7d32; }
+    .status-rejected { background: #fdecea; color: #d32f2f; }
+
+    .offer-actions { display: flex; gap: 8px; }
+
+    .btn-accept, .btn-reject {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .btn-accept { background: #2e7d32; color: white; }
+    .btn-reject { background: #fdecea; color: #d32f2f; }
+
+    .empty-state {
+        text-align: center;
+        padding: 50px 20px;
+        color: #999;
+    }
+
+    .empty-state .icon { font-size: 45px; margin-bottom: 15px; }
+</style>
+</head>
+<body>
+
+<div class="navbar">
+    <div class="logo">♻️ Waste2Value</div>
+    <a href="/dashboard">← Back to Dashboard</a>
+</div>
+
+<div class="content">
+    <div class="tabs">
+        <a href="/offers?type=received" class="tab {% if offer_type == 'received' %}active{% endif %}">Offers Received</a>
+        <a href="/offers?type=sent" class="tab {% if offer_type == 'sent' %}active{% endif %}">Offers Sent</a>
+    </div>
+
+    {% if offers %}
+        {% for offer in offers %}
+        <div class="offer-card">
+            <div class="offer-left">
+                <h3>{{ offer[0] }}</h3>
+                <div class="meta">
+                    {% if offer_type == 'received' %}
+                        Offer from {{ offer[1] }}
+                    {% else %}
+                        Seller: {{ offer[1] }}
+                    {% endif %}
+                </div>
+                <div class="price">₹{{ offer[2] }}</div>
+            </div>
+
+            {% if offer_type == 'received' and offer[3] == 'pending' %}
+                <div class="offer-actions">
+                    <form method="POST" action="/offer/respond/{{ offer[4] }}">
+                        <input type="hidden" name="action" value="accepted">
+                        <button type="submit" class="btn-accept">Accept</button>
+                    </form>
+                    <form method="POST" action="/offer/respond/{{ offer[4] }}">
+                        <input type="hidden" name="action" value="rejected">
+                        <button type="submit" class="btn-reject">Reject</button>
+                    </form>
+                </div>
+            {% elif offer[3] == 'accepted' %}
+                {% if offer[5] %}
+                    <span class="status-badge status-accepted">Pickup: {{ offer[6] }}</span>
+                {% else %}
+                    <a href="/pickup/schedule/{{ offer[4] }}" class="btn-accept" style="text-decoration:none; display:inline-block;">Schedule Pickup</a>
+                {% endif %}
+            {% else %}
+                <span class="status-badge status-{{ offer[3] }}">{{ offer[3] }}</span>
+            {% endif %}
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="empty-state">
+            <div class="icon">📭</div>
+            <p>No offers {{ 'received' if offer_type == 'received' else 'sent' }} yet.</p>
+        </div>
+    {% endif %}
+</div>
+
+</body>
+</html>

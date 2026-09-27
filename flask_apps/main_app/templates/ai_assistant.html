@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AI Recycling Assistant - Waste2Value</title>
+<style>
+    * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', Arial, sans-serif; }
+
+    body { min-height: 100vh; background: #f4f7f5; }
+
+    .navbar {
+        background: linear-gradient(135deg, #56ab2f, #2e7d32);
+        padding: 16px 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: white;
+    }
+    .navbar .logo { font-size: 20px; font-weight: 700; }
+    .navbar-links { display: flex; gap: 10px; align-items: center; }
+    .navbar a {
+        background: rgba(255,255,255,0.2);
+        color: white;
+        text-decoration: none;
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+    .navbar a:hover { background: rgba(255,255,255,0.3); }
+
+    .content { padding: 30px; max-width: 900px; margin: 0 auto; }
+
+    .intro h2 { color: #2e7d32; margin-bottom: 6px; }
+    .intro p { color: #777; font-size: 14px; margin-bottom: 20px; }
+
+    .card {
+        background: white;
+        border-radius: 14px;
+        padding: 25px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        margin-bottom: 22px;
+    }
+
+    .card h3 { color: #2e7d32; margin-bottom: 14px; font-size: 16px; }
+
+    .form-group { margin-bottom: 16px; }
+
+    label { display: block; font-size: 13px; font-weight: 600; color: #333; margin-bottom: 6px; }
+
+    input[type="text"], input[type="file"], select {
+        width: 100%;
+        padding: 11px 13px;
+        border: 1.5px solid #ddd;
+        border-radius: 8px;
+        font-size: 14px;
+        font-family: inherit;
+        outline: none;
+    }
+
+    input:focus, select:focus { border-color: #56ab2f; }
+
+    .hint { font-size: 12px; color: #999; margin-top: 5px; }
+
+    #preview {
+        max-width: 100%;
+        max-height: 220px;
+        border-radius: 10px;
+        margin-top: 12px;
+        display: none;
+        object-fit: contain;
+    }
+
+    #tm-status {
+        margin-top: 12px;
+        padding: 10px 14px;
+        border-radius: 8px;
+        background: #e8f5e9;
+        color: #2e7d32;
+        font-size: 13px;
+        display: none;
+    }
+
+    #tm-bars { margin-top: 8px; }
+    .tm-bar-row { display: flex; align-items: center; gap: 8px; font-size: 12px; margin-bottom: 4px; }
+    .tm-bar-label { width: 70px; text-transform: capitalize; color: #555; }
+    .tm-bar-track { flex: 1; background: #eee; border-radius: 6px; height: 8px; overflow: hidden; }
+    .tm-bar-fill { height: 100%; background: linear-gradient(135deg, #56ab2f, #2e7d32); }
+    .tm-bar-pct { width: 40px; text-align: right; color: #777; }
+
+    button, .btn {
+        padding: 12px 20px;
+        background: linear-gradient(135deg, #56ab2f, #2e7d32);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+    }
+    button:hover, .btn:hover { opacity: 0.9; }
+
+    .btn-secondary {
+        background: #eee;
+        color: #444;
+    }
+
+    .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+
+    .divider { display: flex; align-items: center; gap: 10px; margin: 18px 0; color: #aaa; font-size: 12px; }
+    .divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: #eee; }
+
+    .error-banner {
+        background: #fdecea;
+        color: #c62828;
+        padding: 12px 16px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        font-size: 13px;
+    }
+
+    /* --- results --- */
+    .result-page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 18px;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+    .result-page-header h2 { color: #2e7d32; font-size: 24px; }
+
+    .result-header {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+    .result-icon { font-size: 44px; }
+    .result-title { font-size: 20px; color: #2e7d32; font-weight: 700; text-transform: capitalize; }
+    .result-meta { font-size: 12px; color: #888; margin-top: 2px; }
+    .result-img { width: 90px; height: 90px; object-fit: cover; border-radius: 10px; margin-left: auto; }
+
+    .confidence-track {
+        width: 220px;
+        max-width: 60vw;
+        height: 8px;
+        background: #eee;
+        border-radius: 6px;
+        overflow: hidden;
+        margin-top: 8px;
+    }
+    .confidence-fill {
+        height: 100%;
+        background: linear-gradient(135deg, #56ab2f, #2e7d32);
+    }
+
+    .safety-box {
+        background: #fff8e1;
+        border-left: 4px solid #f9a825;
+        padding: 14px 16px;
+        border-radius: 8px;
+        margin-top: 16px;
+    }
+    .safety-box h4 { color: #f57f17; font-size: 13px; margin-bottom: 8px; }
+    .safety-box ul { margin-left: 18px; font-size: 13px; color: #666; }
+    .safety-box li { margin-bottom: 4px; }
+
+    .idea-card {
+        background: white;
+        border-radius: 14px;
+        padding: 22px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        margin-bottom: 18px;
+    }
+    .idea-title { font-size: 16px; color: #222; font-weight: 700; margin-bottom: 8px; }
+    .idea-badges { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+    .badge {
+        background: #e8f5e9;
+        color: #2e7d32;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+    }
+    .idea-section { margin-bottom: 14px; }
+    .idea-section h5 { font-size: 12px; text-transform: uppercase; letter-spacing: .5px; color: #999; margin-bottom: 6px; }
+    .idea-section ul, .idea-section ol { margin-left: 18px; font-size: 13.5px; color: #444; line-height: 1.6; }
+    .idea-section li { margin-bottom: 4px; }
+
+    .video-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #c62828;
+        text-decoration: none;
+    }
+    .video-link:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<div class="navbar">
+    <div class="logo">♻️ Waste2Value</div>
+    <div class="navbar-links">
+        <a href="/marketplace">Marketplace</a>
+        <a href="/dashboard">← Dashboard</a>
+    </div>
+</div>
+
+<div class="content">
+    <div class="intro">
+        <h2>🤖 AI Recycling Assistant & DIY Guide</h2>
+        <p>Upload a photo of a waste item to detect its material, then get DIY reuse ideas, step-by-step instructions, safety tips and video tutorials.</p>
+    </div>
+
+    {% if error %}
+    <div class="error-banner">{{ error }}</div>
+    {% endif %}
+
+    <div class="card">
+        <h3>1. Detect the material</h3>
+        <form id="assistantForm" method="POST" action="/ai-assistant/analyze" enctype="multipart/form-data">
+            <div class="form-group">
+                <label>Upload a photo of the item</label>
+                <input type="file" id="imageInput" name="image" accept="image/*">
+                <div class="hint">Analyzed automatically as soon as you pick an image — no setup needed. Optionally plug in your own Teachable Machine model below for higher accuracy.</div>
+                <img id="preview" alt="preview">
+                <div id="tm-status"></div>
+                <div id="tm-bars"></div>
+            </div>
+
+            <details style="margin-bottom: 16px;">
+                <summary style="cursor:pointer; font-size:13px; color:#2e7d32; font-weight:600;">⚙️ Optional: override with your own Teachable Machine model</summary>
+                <div class="form-group" style="margin-top:12px;">
+                    <label>Teachable Machine model URL</label>
+                    <input type="text" id="tmModelUrl" placeholder="e.g. https://teachablemachine.withgoogle.com/models/XXXXXXX/">
+                    <div class="hint">By default this page uses a general pretrained image model (MobileNet) that works instantly with no setup. If you want higher accuracy for your specific items, train one at teachablemachine.withgoogle.com with classes named exactly: plastic, paper, glass, metal, e-waste, clothes, and paste the shareable model link here — it will take priority and run live in your browser.</div>
+                </div>
+            </details>
+
+            <input type="hidden" name="tm_material" id="tm_material">
+            <input type="hidden" name="tm_confidence" id="tm_confidence">
+
+            <div class="divider">or choose manually</div>
+
+            <div class="form-group">
+                <label>Material category</label>
+                <select name="manual_material">
+                    <option value="">-- No manual override, use AI detection --</option>
+                    {% for cat in categories %}
+                    <option value="{{ cat }}">{{ cat|capitalize }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <button type="submit">Get DIY Ideas →</button>
+        </form>
+    </div>
+
+    {% if result %}
+    <div class="result-page-header">
+        <h2>AI Analysis Result</h2>
+        <div class="row">
+            <a href="/ai-assistant" class="btn btn-secondary">Analyze Another</a>
+            <a href="/dashboard" class="btn">Dashboard</a>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="result-header">
+            <div class="result-icon">{{ result.icon }}</div>
+            <div>
+                <div class="result-title">{{ result.display_name }}</div>
+                <div class="result-meta">
+                    Detected via: {{ result.source }}
+                    {% if result.confidence %} &nbsp;•&nbsp; confidence: {{ result.confidence }}%{% endif %}
+                </div>
+                {% if result.confidence %}
+                <div class="confidence-track"><div class="confidence-fill" style="width: {{ result.confidence }}%;"></div></div>
+                {% endif %}
+            </div>
+            {% if result.image_path %}
+            <img class="result-img" src="{{ url_for('static', filename='uploads/' + result.image_path) }}">
+            {% endif %}
+        </div>
+
+        <div class="safety-box">
+            <h4>⚠️ General safety tips for {{ result.display_name }}</h4>
+            <ul>
+                {% for tip in result.general_safety %}
+                <li>{{ tip }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <h3 style="color:#2e7d32; margin-bottom: 14px;">💡 DIY Ideas</h3>
+
+    {% for idea in result.ideas %}
+    <div class="idea-card">
+        <div class="idea-title">{{ idea.title }}</div>
+        <div class="idea-badges">
+            <span class="badge">⏱ {{ idea.time }}</span>
+            <span class="badge">🎯 {{ idea.difficulty }}</span>
+        </div>
+
+        <div class="idea-section">
+            <h5>Materials needed</h5>
+            <ul>
+                {% for m in idea.materials_needed %}
+                <li>{{ m }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="idea-section">
+            <h5>Step-by-step instructions</h5>
+            <ol>
+                {% for step in idea.steps %}
+                <li>{{ step }}</li>
+                {% endfor %}
+            </ol>
+        </div>
+
+        <div class="idea-section">
+            <h5>Safety tips</h5>
+            <ul>
+                {% for tip in idea.safety_tips %}
+                <li>{{ tip }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <a class="video-link" href="{{ idea.video_url }}" target="_blank" rel="noopener">🎥 Watch video tutorials on YouTube</a>
+    </div>
+    {% endfor %}
+    {% endif %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8/dist/teachablemachine-image.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@2.1.0/dist/mobilenet.min.js"></script>
+<script>
+    const imageInput = document.getElementById('imageInput');
+    const preview = document.getElementById('preview');
+    const tmStatus = document.getElementById('tm-status');
+    const tmBars = document.getElementById('tm-bars');
+    const tmModelUrlInput = document.getElementById('tmModelUrl');
+    const tmMaterialField = document.getElementById('tm_material');
+    const tmConfidenceField = document.getElementById('tm_confidence');
+
+    // Remember the last-used Teachable Machine model URL for convenience.
+    const savedModelUrl = localStorage.getItem('w2v_tm_model_url');
+    if (savedModelUrl) tmModelUrlInput.value = savedModelUrl;
+
+    let tmModel = null;
+    let tmModelUrlLoaded = null;
+    let mobilenetModel = null;
+
+    async function loadTmModel(baseUrl) {
+        const url = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
+        const modelURL = url + 'model.json';
+        const metadataURL = url + 'metadata.json';
+        tmModel = await tmImage.load(modelURL, metadataURL);
+        tmModelUrlLoaded = baseUrl;
+        localStorage.setItem('w2v_tm_model_url', baseUrl);
+    }
+
+    // --- Zero-setup detector: a general pretrained MobileNet (ImageNet) model,
+    // mapped onto our waste categories. This runs automatically for every
+    // image, no training or model URL required.
+    //
+    // IMPORTANT: MobileNet was never trained on "plastic/paper/glass/metal/
+    // e-waste/clothes" -- it predicts ~1000 everyday object names (e.g.
+    // "tin can", "beer bottle", "cellular telephone"). We map those names to
+    // our categories with a keyword table below. We check MobileNet's top-5
+    // guesses (not just its top-1) and take the FIRST one that matches a
+    // known keyword -- and if NONE of the top-5 match anything, we say so
+    // explicitly instead of silently guessing a category. That silent-guess
+    // behaviour (defaulting to something like "cardboard" whenever unsure)
+    // is what causes things like a soda/tin can being mis-labelled.
+    const CATEGORY_KEYWORDS = {
+        "metal": [
+            "tin can", "milk can", "barrel", "lighter", "can opener",
+            "frying pan", "wok", "hammer", "screwdriver", "padlock",
+            "safety pin", "nail", "chain", "wrench", "coil", "radiator",
+            "beer bottle" // note: often glass, but many aluminium cans get misread as "bottle" family
+        ],
+        "glass": [
+            "wine bottle", "beer glass", "goblet", "vase", "water jug",
+            "pitcher", "flask", "perfume"
+        ],
+        "plastic": [
+            "pop bottle", "water bottle", "plastic bag", "shopping basket",
+            "bucket", "pill bottle", "lotion", "soap dispenser", "syringe"
+        ],
+        "paper": [
+            "envelope", "notebook", "paper towel", "menu", "binder",
+            "carton", "comic book", "book jacket", "packet"
+        ],
+        "e-waste": [
+            "cellular telephone", "laptop", "desktop computer",
+            "computer keyboard", "space bar", "mouse", "remote control",
+            "joystick", "modem", "monitor", "hard disc", "printer",
+            "cassette player", "tape player", "radio", "microwave", "ipod"
+        ],
+        "clothes": [
+            "jersey", "sweatshirt", "cardigan", "trench coat", "jean",
+            "miniskirt", "kimono", "poncho", "sock", "bow tie", "apron",
+            "mitten", "wool", "maillot", "gown"
+        ]
+    };
+
+    function mapPredictionsToCategory(predictions) {
+        // predictions: [{className, probability}, ...] sorted high -> low
+        for (const pred of predictions) {
+            const label = pred.className.toLowerCase();
+            for (const [category, keywords] of Object.entries(CATEGORY_KEYWORDS)) {
+                if (keywords.some(k => label.includes(k))) {
+                    return { material: category, confidence: pred.probability * 100, matchedLabel: pred.className };
+                }
+            }
+        }
+        return null; // nothing in the top-5 matched a known keyword -- don't guess
+    }
+
+    async function runMobilenetDetection(img) {
+        if (!mobilenetModel) {
+            tmStatus.style.display = 'block';
+            tmStatus.textContent = '🧠 Loading AI model (first time only)...';
+            mobilenetModel = await mobilenet.load();
+        }
+        const predictions = await mobilenetModel.classify(img, 5);
+
+        tmBars.innerHTML = predictions.map(p => `
+            <div class="tm-bar-row">
+                <div class="tm-bar-label">${p.className.split(',')[0]}</div>
+                <div class="tm-bar-track"><div class="tm-bar-fill" style="width:${(p.probability * 100).toFixed(0)}%"></div></div>
+                <div class="tm-bar-pct">${(p.probability * 100).toFixed(0)}%</div>
+            </div>
+        `).join('');
+
+        const match = mapPredictionsToCategory(predictions);
+        if (match) {
+            tmMaterialField.value = match.material;
+            tmConfidenceField.value = match.confidence.toFixed(1);
+            tmStatus.textContent = `✅ AI detected "${match.matchedLabel.split(',')[0]}" → ${match.material} (${match.confidence.toFixed(1)}% confidence)`;
+        } else {
+            tmMaterialField.value = '';
+            tmConfidenceField.value = '';
+            tmStatus.textContent = `🤔 Not confident enough to auto-classify this one (top guess: "${predictions[0].className.split(',')[0]}"). Please pick a category manually below, or the server-side backup detector will be used.`;
+        }
+    }
+
+    imageInput.addEventListener('change', async () => {
+        const file = imageInput.files[0];
+        if (!file) return;
+
+        preview.src = URL.createObjectURL(file);
+        preview.style.display = 'block';
+        tmMaterialField.value = '';
+        tmConfidenceField.value = '';
+        tmBars.innerHTML = '';
+        tmStatus.style.display = 'block';
+        tmStatus.textContent = '🧠 Analyzing image...';
+
+        const img = new Image();
+        img.src = preview.src;
+        await new Promise(resolve => { img.onload = resolve; });
+
+        const modelUrl = tmModelUrlInput.value.trim();
+
+        try {
+            if (modelUrl) {
+                // A custom-trained Teachable Machine model takes priority when configured.
+                tmStatus.textContent = '🧠 Loading your Teachable Machine model...';
+                if (!tmModel || tmModelUrlLoaded !== modelUrl) {
+                    await loadTmModel(modelUrl);
+                }
+                const predictions = await tmModel.predict(img);
+                predictions.sort((a, b) => b.probability - a.probability);
+                const top = predictions[0];
+
+                tmMaterialField.value = top.className.toLowerCase().trim();
+                tmConfidenceField.value = (top.probability * 100).toFixed(1);
+                tmStatus.textContent = `✅ AI detected: ${top.className} (${(top.probability * 100).toFixed(1)}% confidence)`;
+
+                tmBars.innerHTML = predictions.map(p => `
+                    <div class="tm-bar-row">
+                        <div class="tm-bar-label">${p.className}</div>
+                        <div class="tm-bar-track"><div class="tm-bar-fill" style="width:${(p.probability * 100).toFixed(0)}%"></div></div>
+                        <div class="tm-bar-pct">${(p.probability * 100).toFixed(0)}%</div>
+                    </div>
+                `).join('');
+            } else {
+                // Zero-setup path: general pretrained MobileNet + keyword mapping.
+                await runMobilenetDetection(img);
+            }
+        } catch (err) {
+            tmStatus.textContent = '⚠️ Could not run AI detection in the browser — falling back to server-side detection.';
+            console.error(err);
+        }
+    });
+</script>
+
+</body>
+</html>

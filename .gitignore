@@ -1,0 +1,8 @@
+# Local secrets: never commit. Only the .env.example files belong in the repository.
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+venv/
+.venv/

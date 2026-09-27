@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Marketplace - Waste2Value</title>
+<style>
+    * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', Arial, sans-serif; }
+
+    body { min-height: 100vh; background: #f4f7f5; }
+
+    /* --- top bar --- */
+    .navbar {
+        background: linear-gradient(135deg, #56ab2f, #2e7d32);
+        padding: 16px 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: white;
+    }
+    .navbar .logo { font-size: 20px; font-weight: 700; color: white; text-decoration: none; }
+    .navbar .user-info { display: flex; align-items: center; gap: 15px; font-size: 14px; }
+    .navbar a.logout {
+        background: rgba(255,255,255,0.2);
+        color: white;
+        text-decoration: none;
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+    .navbar a.logout:hover { background: rgba(255,255,255,0.3); }
+
+    /* --- tab sub-nav --- */
+    .subnav {
+        background: white;
+        display: flex;
+        justify-content: center;
+        gap: 40px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .subnav a {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 16px 4px;
+        text-decoration: none;
+        color: #888;
+        font-size: 14px;
+        font-weight: 600;
+        border-bottom: 3px solid transparent;
+    }
+    .subnav a.active { color: #2e7d32; border-bottom-color: #2e7d32; }
+    .subnav a:hover { color: #2e7d32; }
+
+    .content { padding: 30px; max-width: 1100px; margin: 0 auto; }
+
+    /* --- AI banner --- */
+    .ai-banner {
+        background: linear-gradient(135deg, #eafaf0, #e3f6e9);
+        border: 1px solid #d7f0dd;
+        border-radius: 16px;
+        padding: 28px 30px;
+        margin-bottom: 26px;
+        display: flex;
+        align-items: center;
+        gap: 26px;
+        flex-wrap: wrap;
+    }
+    .ai-banner-icon-circle {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: #2e7d32;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 26px;
+        flex-shrink: 0;
+    }
+    .ai-banner-text { min-width: 240px; }
+    .ai-banner-text h2 { color: #2e7d32; font-size: 22px; margin-bottom: 6px; }
+    .ai-banner-text p { color: #5a6b5d; font-size: 14px; margin-bottom: 16px; max-width: 460px; }
+
+    .ai-banner-form { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+    .btn-outline {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: white;
+        border: 1.5px solid #cfe8d4;
+        color: #2e7d32;
+        padding: 11px 18px;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+    .btn-outline:hover { background: #f3fbf5; }
+
+    .btn-solid {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: linear-gradient(135deg, #56ab2f, #2e7d32);
+        border: none;
+        color: white;
+        padding: 12px 20px;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+    .btn-solid:hover { opacity: 0.92; }
+    .btn-solid:disabled, .btn-outline:disabled { opacity: 0.55; cursor: not-allowed; }
+
+    .ai-banner-hint { font-size: 12px; color: #7c8a7e; margin-top: 10px; width: 100%; }
+    .ai-banner-filename { font-size: 12.5px; color: #2e7d32; font-weight: 600; margin-top: 4px; width: 100%; }
+
+    .ai-banner-illustration {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+    .earth-graphic {
+        position: relative;
+        width: 90px;
+        height: 90px;
+        border-radius: 50%;
+        background: radial-gradient(circle at 35% 35%, #90caf9, #42a5f5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 34px;
+        flex-shrink: 0;
+    }
+    .earth-graphic .leaf { position: absolute; font-size: 22px; }
+    .earth-graphic .leaf.l1 { top: -10px; left: -14px; }
+    .earth-graphic .leaf.l2 { bottom: -8px; right: -16px; transform: scaleX(-1); }
+    .banner-tagline {
+        font-family: 'Brush Script MT', 'Segoe Script', cursive;
+        font-size: 20px;
+        color: #2e7d32;
+        line-height: 1.15;
+        font-style: italic;
+    }
+
+    /* --- marketplace header row --- */
+    .marketplace-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    .marketplace-header h2 { color: #2e7d32; display: flex; align-items: center; gap: 8px; }
+
+    .new-listing-btn {
+        background: linear-gradient(135deg, #56ab2f, #2e7d32);
+        color: white;
+        text-decoration: none;
+        padding: 10px 18px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 700;
+    }
+    .new-listing-btn:hover { opacity: 0.9; }
+
+    .filter-form {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+    }
+    .filter-form input[type="text"] {
+        flex: 1;
+        min-width: 200px;
+        padding: 12px 16px;
+        border: 1.5px solid #e2e6e3;
+        border-radius: 10px;
+        font-size: 14px;
+        background: white;
+    }
+    .filter-form select {
+        padding: 12px 16px;
+        border: 1.5px solid #e2e6e3;
+        border-radius: 10px;
+        font-size: 14px;
+        background: white;
+    }
+    .filter-form button {
+        padding: 12px 20px;
+        background: linear-gradient(135deg, #56ab2f, #2e7d32);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    /* --- listing cards --- */
+    .listings-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 22px;
+    }
+
+    .listing-card {
+        background: white;
+        border-radius: 14px;
+        overflow: hidden;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        transition: transform 0.2s;
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        position: relative;
+    }
+    .listing-card:hover { transform: translateY(-4px); }
+
+    .listing-media { position: relative; }
+
+    .listing-img {
+        width: 100%;
+        height: 160px;
+        object-fit: cover;
+        background: #e8f5e9;
+        display: block;
+    }
+    .no-img {
+        width: 100%;
+        height: 160px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 40px;
+        color: white;
+    }
+    .ph-plastic  { background: linear-gradient(135deg,#64b5f6,#1e88e5); }
+    .ph-paper    { background: linear-gradient(135deg,#d7ccc8,#a1887f); }
+    .ph-cardboard{ background: linear-gradient(135deg,#ffcc80,#fb8c00); }
+    .ph-glass    { background: linear-gradient(135deg,#a5d6a7,#66bb6a); }
+    .ph-metal    { background: linear-gradient(135deg,#b0bec5,#78909c); }
+    .ph-e-waste  { background: linear-gradient(135deg,#4db6ac,#00796b); }
+    .ph-clothes  { background: linear-gradient(135deg,#ce93d8,#8e24aa); }
+    .ph-default  { background: linear-gradient(135deg,#a5d6a7,#66bb6a); }
+
+    .fav-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.9);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 15px;
+        cursor: pointer;
+        border: none;
+        color: #999;
+    }
+    .fav-btn.active { color: #e53935; }
+
+    .listing-info { padding: 15px; }
+    .listing-info h3 { font-size: 15px; color: #222; margin-bottom: 6px; }
+
+    .listing-category {
+        display: inline-block;
+        background: #e8f5e9;
+        color: #2e7d32;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        text-transform: capitalize;
+    }
+
+    .listing-price { font-size: 17px; font-weight: 700; color: #2e7d32; }
+
+    .empty-state { text-align: center; padding: 60px 20px; color: #999; }
+    .empty-state .icon { font-size: 50px; margin-bottom: 15px; }
+</style>
+</head>
+<body>
+
+<div class="navbar">
+    <a href="/dashboard" class="logo">♻️ Waste2Value</a>
+    <div class="user-info">
+        {% if user_name %}<span>{{ user_name }}</span>{% endif %}
+        <a href="/logout" class="logout">Logout</a>
+    </div>
+</div>
+
+<div class="subnav">
+    <a href="/marketplace" class="active">🛒 Marketplace</a>
+    <a href="/my-listings">📋 My Listings</a>
+    <a href="/profile">👤 Profile</a>
+</div>
+
+<div class="content">
+    <div class="ai-banner">
+        <div class="ai-banner-icon-circle">♻️</div>
+
+        <div class="ai-banner-text">
+            <h2>AI Recycling Assistant</h2>
+            <p>Upload a waste image to identify the material and get recycling, DIY and safety guidance.</p>
+
+            <form class="ai-banner-form" method="POST" action="/ai-assistant/analyze" enctype="multipart/form-data" id="quickAnalyzeForm">
+                <input type="file" name="image" id="quickImageInput" accept="image/*" style="display:none;">
+                <button type="button" class="btn-outline" id="chooseImageBtn">📷 Choose Waste Image</button>
+                <button type="submit" class="btn-solid" id="analyzeBtn" disabled>✨ Analyze Waste</button>
+                <div class="ai-banner-filename" id="chosenFileName"></div>
+            </form>
+            <div class="ai-banner-hint">JPG, JPEG, PNG or WEBP · maximum 8 MB</div>
+        </div>
+
+        <div class="ai-banner-illustration">
+            <div class="earth-graphic">
+                🌍
+                <span class="leaf l1">🍃</span>
+                <span class="leaf l2">🍃</span>
+            </div>
+            <div class="banner-tagline">Small Steps<br>Big Impact</div>
+        </div>
+    </div>
+
+    <div class="marketplace-header">
+        <h2>🛒 Marketplace</h2>
+        <a href="/listing/new" class="new-listing-btn">+ New Listing</a>
+    </div>
+
+    <form class="filter-form" method="GET" action="/marketplace">
+        <input type="text" name="search" placeholder="Search items..." value="{{ search_query or '' }}">
+        <select name="category">
+            <option value="">All Categories</option>
+            <option value="plastic" {% if selected_category == 'plastic' %}selected{% endif %}>Plastic</option>
+            <option value="paper" {% if selected_category == 'paper' %}selected{% endif %}>Paper</option>
+            <option value="glass" {% if selected_category == 'glass' %}selected{% endif %}>Glass</option>
+            <option value="metal" {% if selected_category == 'metal' %}selected{% endif %}>Metal</option>
+            <option value="e-waste" {% if selected_category == 'e-waste' %}selected{% endif %}>E-Waste</option>
+            <option value="clothes" {% if selected_category == 'clothes' %}selected{% endif %}>Clothes</option>
+        </select>
+        <button type="submit">🔍 Filter</button>
+    </form>
+
+    {% set category_icons = {'plastic': '🧴', 'paper': '📰', 'cardboard': '📦', 'glass': '🫙', 'metal': '🔩', 'e-waste': '💻', 'clothes': '👕'} %}
+    {% if listings %}
+    <div class="listings-grid">
+        {% for item in listings %}
+        <div class="listing-card">
+            <a href="/listing/{{ item[0] }}" style="text-decoration:none; color:inherit;">
+                <div class="listing-media">
+                    {% if item[7] %}
+                        <img class="listing-img" src="{{ url_for('static', filename='uploads/' + item[7]) }}">
+                    {% else %}
+                        <div class="no-img ph-{{ item[3]|lower }}{% if item[3]|lower not in category_icons %} ph-default{% endif %}">{{ category_icons.get(item[3]|lower, '♻️') }}</div>
+                    {% endif %}
+                </div>
+                <div class="listing-info">
+                    <span class="listing-category">{{ item[3] }}</span>
+                    <h3>{{ item[2] }}</h3>
+                    <div class="listing-price">₹{{ item[5] }}</div>
+                </div>
+            </a>
+            <button class="fav-btn" data-id="{{ item[0] }}" onclick="toggleFav(event, this)">♡</button>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="icon">📭</div>
+        <p>No listings found. Try a different search or be the first to post one!</p>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    // Wire up the "Choose Waste Image" / "Analyze Waste" mini-flow in the banner.
+    const chooseBtn = document.getElementById('chooseImageBtn');
+    const quickInput = document.getElementById('quickImageInput');
+    const analyzeBtn = document.getElementById('analyzeBtn');
+    const chosenFileName = document.getElementById('chosenFileName');
+
+    chooseBtn.addEventListener('click', () => quickInput.click());
+
+    quickInput.addEventListener('change', () => {
+        if (quickInput.files.length > 0) {
+            chosenFileName.textContent = '✅ Selected: ' + quickInput.files[0].name;
+            analyzeBtn.disabled = false;
+        } else {
+            chosenFileName.textContent = '';
+            analyzeBtn.disabled = true;
+        }
+    });
+
+    // Decorative wishlist heart -- stored per-browser only (no backend yet).
+    function toggleFav(evt, btn) {
+        evt.preventDefault();
+        evt.stopPropagation();
+        const id = btn.dataset.id;
+        const key = 'w2v_favorites';
+        let favs = JSON.parse(localStorage.getItem(key) || '[]');
+        if (favs.includes(id)) {
+            favs = favs.filter(f => f !== id);
+            btn.classList.remove('active');
+            btn.textContent = '♡';
+        } else {
+            favs.push(id);
+            btn.classList.add('active');
+            btn.textContent = '♥';
+        }
+        localStorage.setItem(key, JSON.stringify(favs));
+    }
+
+    (function initFavs() {
+        const favs = JSON.parse(localStorage.getItem('w2v_favorites') || '[]');
+        document.querySelectorAll('.fav-btn').forEach(btn => {
+            if (favs.includes(btn.dataset.id)) {
+                btn.classList.add('active');
+                btn.textContent = '♥';
+            }
+        });
+    })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Dashboard - Waste2Value</title>
+<style>
+    * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', Arial, sans-serif; }
+
+    body {
+        min-height: 100vh;
+        background: #f4f7f5;
+    }
+
+    .navbar {
+        background: linear-gradient(135deg, #56ab2f, #2e7d32);
+        padding: 16px 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: white;
+    }
+
+    .navbar .logo {
+        font-size: 20px;
+        font-weight: 700;
+    }
+
+    .navbar .user-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        font-size: 14px;
+    }
+
+    .navbar a {
+        background: rgba(255,255,255,0.2);
+        color: white;
+        text-decoration: none;
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .navbar a:hover { background: rgba(255,255,255,0.3); }
+
+    .content {
+        padding: 40px 30px;
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    .welcome-card {
+        background: white;
+        padding: 30px;
+        border-radius: 16px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        margin-bottom: 25px;
+    }
+
+    .welcome-card h2 {
+        color: #2e7d32;
+        margin-bottom: 8px;
+    }
+
+    .welcome-card p {
+        color: #777;
+        font-size: 14px;
+    }
+
+    .badge {
+        display: inline-block;
+        background: #e8f5e9;
+        color: #2e7d32;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        margin-top: 10px;
+        text-transform: capitalize;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
+    }
+
+    .card {
+        background: white;
+        padding: 25px;
+        border-radius: 14px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        text-align: center;
+        transition: transform 0.2s;
+        display: block;
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .card:hover { transform: translateY(-4px); }
+
+    .card .icon { font-size: 32px; margin-bottom: 12px; }
+
+    .card h3 { font-size: 16px; color: #333; margin-bottom: 6px; }
+
+    .card p { font-size: 13px; color: #888; }
+</style>
+</head>
+<body>
+
+<div class="navbar">
+    <div class="logo">♻️ Waste2Value</div>
+    <div class="user-info">
+        <span>{{ user_name }}</span>
+        <a href="/logout">Logout</a>
+    </div>
+</div>
+
+<div class="content">
+    <div class="welcome-card">
+        <h2>Welcome back, {{ user_name }} 👋</h2>
+        <p>Here's what's happening with your account today.</p>
+        <span class="badge">{{ user_role }}</span>
+    </div>
+
+    <div class="grid">
+        <a href="/marketplace" class="card">
+            <div class="icon">🛒</div>
+            <h3>Marketplace</h3>
+            <p>Browse recyclable items</p>
+        </a>
+        <a href="/my-listings" class="card">
+            <div class="icon">📦</div>
+            <h3>My Listings</h3>
+            <p>Manage your posted items</p>
+        </a>
+        <a href="/offers" class="card">
+            <div class="icon">💰</div>
+            <h3>My Offers</h3>
+            <p>Track offers sent & received</p>
+        </a>
+        <a href="/profile" class="card">
+            <div class="icon">👤</div>
+            <h3>Profile</h3>
+            <p>Update your account info</p>
+        </a>
+    </div>
+</div>
+
+</body>
+</html>

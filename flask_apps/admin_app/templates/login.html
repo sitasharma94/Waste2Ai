@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="login-card">
+
+        <div class="left">
+
+            <img src="{{ url_for('static', filename='images/login.png') }}" alt="Login">
+
+        </div>
+
+        <div class="right">
+
+            <h1>Admin Login</h1>
+
+            <p>Welcome back, Administrator</p>
+
+            {% include 'partials/flash.html' %}
+
+            <form action="{{ url_for('login') }}" method="POST">
+
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                {% if next_url %}
+                <input type="hidden" name="next" value="{{ next_url }}">
+                {% endif %}
+
+                <input type="text" name="username" placeholder="Username" value="{{ username }}"
+                       autocomplete="username" maxlength="50" required autofocus>
+
+                <input type="password" name="password" placeholder="Password"
+                       autocomplete="current-password" required>
+
+                <button type="submit">Login</button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listings</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='listings.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <script src="{{ url_for('static', filename='script.js') }}" defer></script>
+</head>
+
+<body>
+
+<div class="container">
+
+    {% set active = 'listings' %}
+    {% include 'partials/sidebar.html' %}
+
+    <div class="main-content">
+
+        <div class="top-bar">
+
+            <h1>Listings</h1>
+
+            <form class="controls" method="GET" action="{{ url_for('listings') }}">
+
+                <input type="text" name="q" value="{{ q }}" maxlength="100" placeholder="Search title, category, seller, status...">
+
+                <button type="submit">Search</button>
+
+            </form>
+
+        </div>
+
+        {% if q %}
+        <p class="search-summary">
+            {{ listings|length }} result{{ '' if listings|length == 1 else 's' }} for "{{ q }}" ·
+            <a href="{{ url_for('listings') }}">Clear search</a>
+        </p>
+        {% endif %}
+
+        {% include 'partials/flash.html' %}
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Category</th>
+                    <th>Seller</th>
+                    <th>Price</th>
+                    <th>Condition</th>
+                    <th>Status</th>
+                    <th>Created At</th>
+                    <th>Actions</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for item in listings %}
+
+                <tr>
+
+                    <td>{{ item.id }}</td>
+                    <td>{{ item.title }}</td>
+                    <td>{{ item.category|capitalize }}</td>
+                    <td>{{ item.seller_name or ('User #' ~ item.seller_id) }}</td>
+                    <td>{{ item.price|money }}</td>
+                    <td>{{ item.item_condition|capitalize if item.item_condition else '—' }}</td>
+
+                    <td>
+                        <span class="status {{ 'active' if item.status == 'available' else 'archive' }}">
+                            {{ item.status|capitalize if item.status else '—' }}
+                        </span>
+                    </td>
+
+                    <td>{{ item.created_at|datetime }}</td>
+
+                    <td>
+
+                        <a class="edit-btn" href="{{ url_for('view_listing', listing_id=item.id) }}">View</a>
+
+                        {% if item.status in hidden_statuses %}
+                        <form class="inline-form" method="POST" action="{{ url_for('listing_action', listing_id=item.id, action='restore') }}"
+                              data-confirm="Restore '{{ item.title }}' to the marketplace?">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="archive-btn">Restore</button>
+                        </form>
+                        {% elif item.status == 'available' %}
+                        <form class="inline-form" method="POST" action="{{ url_for('listing_action', listing_id=item.id, action='remove') }}"
+                              data-confirm="Remove '{{ item.title }}' from the marketplace? The listing and its offers are kept and it can be restored.">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="delete-btn">Remove</button>
+                        </form>
+                        {% else %}
+                        <form class="inline-form" method="POST" action="{{ url_for('listing_action', listing_id=item.id, action='archive') }}"
+                              data-confirm="Archive '{{ item.title }}'? It can be restored later.">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="archive-btn">Archive</button>
+                        </form>
+                        {% endif %}
+
+                    </td>
+
+                </tr>
+
+                {% else %}
+
+                <tr>
+                    <td colspan="9" class="empty-state">
+                        {% if q %}No listings match "{{ q }}".{% else %}No listings have been posted yet.{% endif %}
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>
