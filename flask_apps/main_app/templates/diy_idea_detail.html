@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ idea.title }} - Waste2Value DIY</title>
+<style>
+    * { box-sizing:border-box; font-family:'Segoe UI',Arial,sans-serif; }
+    body { margin:0; min-height:100vh; background:#f4f7f5; color:#333; }
+    .navbar { background:linear-gradient(135deg,#56ab2f,#2e7d32); padding:16px 30px; display:flex; justify-content:space-between; align-items:center; color:white; }
+    .navbar .logo { font-size:20px; font-weight:700; }
+    .navbar a { background:rgba(255,255,255,.2); color:white; text-decoration:none; padding:9px 15px; border-radius:7px; font-size:14px; font-weight:600; }
+    .content { max-width:1000px; margin:30px auto; padding:0 20px 40px; }
+    .back { display:inline-block; margin-bottom:18px; color:#2e7d32; font-weight:600; text-decoration:none; }
+    .panel { background:white; border-radius:16px; padding:26px; box-shadow:0 5px 20px rgba(0,0,0,.08); }
+    h1 { margin:0 0 14px; color:#2e7d32; }
+    .description { color:#58645a; line-height:1.65; }
+    .gallery { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin-top:22px; }
+    .gallery img, .placeholder { width:100%; height:190px; border-radius:10px; object-fit:contain; background:#f4f7f5; }
+    .placeholder { border:2px dashed #c8d8c8; display:flex; align-items:center; justify-content:center; color:#829182; font-size:14px; }
+    .details { display:grid; grid-template-columns:1fr 1fr; gap:28px; margin-top:26px; }
+    h2 { color:#2e7d32; font-size:19px; }
+    ul, ol { padding-left:22px; line-height:1.8; color:#555; }
+    .actions { display:flex; justify-content:center; gap:12px; flex-wrap:wrap; margin-top:25px; }
+    .actions a { display:inline-block; padding:11px 18px; border-radius:8px; color:white; background:#2e7d32; text-decoration:none; font-weight:600; }
+    .actions a.youtube { background:#d71920; }
+    .safety-note { margin-top:24px; padding:12px 14px; border-left:4px solid #d8a62e; border-radius:5px; background:#fff9e9; color:#66552d; line-height:1.6; }
+    @media(max-width:700px) { .gallery { grid-template-columns:repeat(2,minmax(0,1fr)); } .gallery img,.placeholder { height:150px; } .details { grid-template-columns:1fr; gap:8px; } }
+</style>
+</head>
+<body>
+<div class="navbar">
+    <div class="logo">Waste2Value DIY</div>
+    <a href="/dashboard">Dashboard</a>
+</div>
+<main class="content">
+    <a class="back" href="{{ url_for('recycle_ideas', category=category) }}">&#8592; Back to {{ data.label }} ideas</a>
+    <section class="panel">
+        <h1>{{ idea.emoji }} {{ idea.title }}</h1>
+        <p class="description">{{ idea.description }}</p>
+        <div class="gallery">
+            {% for image in idea.gallery_images %}
+                {% if image %}
+                <img src="{{ url_for('static', filename=image) }}" alt="{{ idea.title }} project photo {{ loop.index }}">
+                {% else %}
+                <div class="placeholder">Image coming soon</div>
+                {% endif %}
+            {% endfor %}
+        </div>
+        <div class="details">
+            <section>
+                <h2>Materials required</h2>
+                <ul>{% for material in idea.materials %}<li>{{ material }}</li>{% endfor %}</ul>
+            </section>
+            <section>
+                <h2>Step-by-step guide</h2>
+                <ol>{% for step in idea.steps %}<li>{{ step }}</li>{% endfor %}</ol>
+            </section>
+        </div>
+        <p class="safety-note"><strong>Safety:</strong> Follow the project guidance. Take care with sharp edges and tools, and get qualified adult help with cutting, glass, heat, or electrical parts.</p>
+        <div class="actions">
+            <a class="youtube" href="{{ idea.youtube }}" target="_blank" rel="noopener">&#9654; Watch a tutorial</a>
+            <a href="/recycle">Choose another waste type</a>
+        </div>
+    </section>
+</main>
+</body>
+</html>

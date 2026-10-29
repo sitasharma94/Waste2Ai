@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Order {{ order.order_number }} - Waste2Value Handmade</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+{% include 'partials/diy_styles.html' %}
+{% include 'partials/diy_order_styles.html' %}
+</head>
+<body>
+{% include 'partials/diy_nav.html' %}
+
+{% macro money(v) %}{% if v == 0 %}₹0{% else %}₹{{ '{:,.2f}'.format(v) }}{% endif %}{% endmacro %}
+{% set noun = 'request' if order.is_free else 'order' %}
+{% set flow = [('placed', 'Placed', order.created_label), ('confirmed', 'Confirmed', order.confirmed_label),
+               ('shipped', 'Shipped', order.shipped_label), ('delivered', 'Delivered', order.delivered_label)] %}
+{% set flow_keys = ['placed', 'confirmed', 'shipped', 'delivered'] %}
+{% set reached = flow_keys.index(order.status) if order.status in flow_keys else -1 %}
+{% set action_labels = {
+    'confirm': 'Approve request' if order.is_free else 'Confirm order',
+    'reject': 'Decline request' if order.is_free else 'Reject order',
+    'ship': 'Mark as shipped',
+    'deliver': 'I received it',
+    'cancel': 'Cancel ' ~ noun,
+} %}
+{% set other = order.seller_name if role == 'buyer' else order.buyer_name %}
+
+<main class="page">
+    <div class="wrap">
+        <a href="{{ url_for('diy_orders', view='sales' if role == 'seller' else None) }}" class="back">← My Orders</a>
+
+        {% if message %}
+            {% if message[1] == 'placed' %}
+            <div class="notice" role="status"><span aria-hidden="true">✨</span>
+                <span>Your {{ noun }} has been placed. It is <b>not confirmed yet</b>: {{ order.seller_name }} (the seller) will accept or decline it, and this page will show the update.</span></div>
+            {% elif message[1] == 'paid' %}
+            <div class="notice" role="status"><span aria-hidden="true">✅</span>
+                <span>Payment verified with Razorpay. Your order is now placed and waiting for {{ order.seller_name }} (the seller) to confirm it.</span></div>
+            {% elif message[1] == 'simulated' %}
+            <section class="pay-confirm" role="status" aria-label="Payment confirmation">
+                <span class="tick" aria-hidden="true">✓</span>
+                <div>
+                    <h2>Payment submitted</h2>
+                    <p class="page-sub" style="margin:0">Your order is placed and waiting for {{ order.seller_name }} (the seller) to confirm it.</p>
+                    <dl class="details">
+                        <dt>Amount</dt><dd>{{ money(order.total_amount) }}</dd>
+                        {% if message[2] %}<dt>Payment reference</dt><dd>{{ message[2] }}</dd>{% endif %}
+                        <dt>Method</dt><dd>Pay Online</dd>
+                        <dt>Recorded as</dt><dd><span class="sim-tag">Simulation</span> Not a verified payment. No real money was transferred.</dd>
+                    </dl>
+                </div>
+            </section>
+            {% elif message[0] == 'error' %}
+            <div class="errors" role="alert">{{ message[1] }}</div>
+            {% else %}
+            <div class="notice" role="status">{{ message[1] }}</div>
+            {% endif %}
+        {% endif %}
+
+        <div class="section-head" style="margin-bottom:22px">
+            <div>
+                <div class="kicker">{{ 'Free item request' if order.is_free else 'Order' }} · {{ order.created_label }}</div>
+                <h1 class="page-title" style="margin:0">{{ order.order_number }}</h1>
+                <p class="people">
+                    Seller: <b>{{ order.seller_name }}</b>{% if role == 'seller' %} (you){% endif %}
+                    · Buyer: <b>{{ order.buyer_name }}</b>{% if role == 'buyer' %} (you){% endif %}
+                </p>
+            </div>
+            <span class="status st-{{ order.status }}" style="font-size:14px;padding:8px 16px">{{ order.status_label }}</span>
+        </div>
+
+        <div class="layout">
+            <div class="stack">
+                <section class="box">
+                    <h2>Status</h2>
+                    {% if reached >= 0 %}
+                    <ol class="timeline" aria-label="Order progress">
+                        {% for key, label, when in flow %}
+                        <li class="{{ 'done' if loop.index0 <= reached else '' }}{{ ' current' if loop.index0 == reached else '' }}"
+                            {% if loop.index0 == reached %}aria-current="step"{% endif %}>
+                            {{ label }}{% if when and loop.index0 <= reached %}<small>{{ when }}</small>{% endif %}
+                        </li>
+                        {% endfor %}
+                    </ol>
+                    {% endif %}
+
+                    <p class="page-sub" style="margin:16px 0 0">
+                        {% if order.status == 'pending_payment' %}
+                            {% if order.payment_status == 'failed' %}The last payment attempt failed. You haven't been charged; you can try again.
+                            {% elif order.payment_status == 'authorized' %}Your payment is authorised; the order will be placed once Razorpay captures it.
+                            {% else %}This order isn't placed yet: it's waiting for your online payment. The piece is held for you for a short time.{% endif %}
+                        {% elif order.status == 'placed' %}
+                            {% if role == 'buyer' %}Waiting for {{ order.seller_name }} to confirm your {{ noun }}.{% else %}{{ order.buyer_name }} is waiting for you to confirm or decline this {{ noun }}.{% endif %}
+                        {% elif order.status == 'confirmed' %}
+                            {% if role == 'buyer' %}{{ order.seller_name }} has confirmed your {{ noun }} and is preparing it.{% else %}You confirmed this {{ noun }}. Mark it as shipped once it's on its way.{% endif %}
+                        {% elif order.status == 'shipped' %}
+                            {% if role == 'buyer' %}On its way. Tap “I received it” once it arrives.{% else %}Shipped. {{ order.buyer_name }} will confirm when it arrives.{% endif %}
+                        {% elif order.status == 'delivered' %}Delivered{% if order.delivered_label %} on {{ order.delivered_label }}{% endif %}. {{ 'Enjoy your piece!' if role == 'buyer' else 'This order is complete.' }}
+                        {% elif order.status == 'rejected' %}The seller declined this {{ noun }}.
+                        {% elif order.status == 'cancelled' %}This {{ noun }} was cancelled{% if order.closed_label %} on {{ order.closed_label }}{% endif %}.
+                        {% endif %}
+                    </p>
+
+                    {% if role == 'buyer' and order.status == 'pending_payment' %}
+                    <div class="actions">
+                        {% if order.is_demo %}<a class="btn btn-primary" href="{{ url_for('diy_payment_simulation', order_number=order.order_number) }}">Complete payment</a>
+                        {% elif online_available %}<a class="btn btn-primary" href="{{ url_for('diy_payment_page', order_number=order.order_number) }}">Pay {{ money(order.total_amount) }} now</a>{% endif %}
+                        {% if order.provider_order_id and online_available and not order.is_demo %}
+                        <form method="POST" action="{{ url_for('diy_payment_refresh', order_number=order.order_number) }}">
+                            {% include 'partials/diy_form_guard.html' %}
+                            <button type="submit" class="btn btn-plain">Check payment status</button>
+                        </form>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    {% if actions %}
+                    <div class="actions">
+                        {% for a in actions if a != 'ship' %}
+                        <form method="POST" action="{{ url_for('diy_order_update', order_number=order.order_number) }}"
+                              {% if a in ('reject', 'cancel') %}onsubmit="return confirm('{{ action_labels[a] }}? This cannot be undone.')"{% endif %}>
+                            {% include 'partials/diy_form_guard.html' %}
+                            <button type="submit" name="action" value="{{ a }}" class="btn {{ 'btn-danger' if a in ('reject', 'cancel') else ('btn-primary' if a in ('confirm', 'deliver') else 'btn-sage') }}">{{ action_labels[a] }}</button>
+                        </form>
+                        {% endfor %}
+                    </div>
+                    {% if 'ship' in actions %}
+                    <form method="POST" action="{{ url_for('diy_order_update', order_number=order.order_number) }}" class="ship-form">
+                        {% include 'partials/diy_form_guard.html' %}
+                        <h3>Ship this order</h3>
+                        <p class="field-hint" style="margin:0 0 14px">Courier details are optional. Add them if you have them so {{ order.buyer_name }} can follow the parcel.</p>
+                        <div class="grid-2">
+                            <div class="field">
+                                <label for="courier_name">Courier <span class="opt">(optional)</span></label>
+                                <input type="text" id="courier_name" name="courier_name" maxlength="100" placeholder="e.g. India Post, Delhivery">
+                            </div>
+                            <div class="field">
+                                <label for="tracking_number">Tracking number <span class="opt">(optional)</span></label>
+                                <input type="text" id="tracking_number" name="tracking_number" maxlength="100">
+                            </div>
+                            <div class="field span-2">
+                                <label for="tracking_url">Tracking link <span class="opt">(optional)</span></label>
+                                <input type="url" id="tracking_url" name="tracking_url" maxlength="500" placeholder="https://">
+                            </div>
+                        </div>
+                        <button type="submit" name="action" value="ship" class="btn btn-sage">Mark as shipped</button>
+                    </form>
+                    {% endif %}
+                    {% elif role == 'seller' and order.status in ('placed', 'confirmed') and not payment_settled %}
+                    <div class="info"><span aria-hidden="true">⏳</span><div>This order can't move forward until its online payment is verified.</div></div>
+                    {% endif %}
+                </section>
+
+                {% if order.courier_name or order.tracking_number or order.tracking_url or order.status in ('shipped', 'delivered') %}
+                <section class="box">
+                    <h2>Shipment</h2>
+                    {% if order.courier_name or order.tracking_number or order.tracking_url %}
+                    <dl class="details">
+                        {% if order.courier_name %}<dt>Courier</dt><dd>{{ order.courier_name }}</dd>{% endif %}
+                        {% if order.tracking_number %}<dt>Tracking number</dt><dd>{{ order.tracking_number }}</dd>{% endif %}
+                        {% if order.tracking_url %}<dt>Tracking link</dt><dd><a href="{{ order.tracking_url }}" target="_blank" rel="noopener noreferrer nofollow">Track this parcel ↗</a></dd>{% endif %}
+                        {% if order.shipped_label %}<dt>Shipped</dt><dd>{{ order.shipped_label }}</dd>{% endif %}
+                    </dl>
+                    {% else %}
+                    <p class="page-sub" style="margin:0">The seller didn't add courier details.</p>
+                    {% endif %}
+                    <div class="info"><span aria-hidden="true">ℹ️</span><div>Shipment details are entered by the seller and aren't tracked automatically.</div></div>
+                </section>
+                {% endif %}
+
+                <section class="box">
+                    <h2>Delivery address</h2>
+                    {% if show_address %}
+                    <address class="address">
+                        <b>{{ order.delivery_name }}</b> · +91 {{ order.delivery_phone }}<br>
+                        {{ order.address_line }}, {{ order.locality }}<br>
+                        {{ order.city }}, {{ order.state }} {{ order.pincode }}
+                    </address>
+                    {% if order.delivery_instructions %}<div class="info"><span aria-hidden="true">📝</span><div>{{ order.delivery_instructions }}</div></div>{% endif %}
+                    {% else %}
+                    <p class="page-sub" style="margin:0">Hidden because this {{ noun }} was closed without delivery.</p>
+                    {% endif %}
+                </section>
+
+                <section class="box">
+                    <h2>Payment</h2>
+                    <dl class="details">
+                        <dt>Method</dt><dd>{{ order.payment_method_label }}{% if order.is_online %} (Razorpay){% endif %}</dd>
+                        <dt>Payment status</dt><dd>{{ order.payment_status_label }}</dd>
+                        {% if order.paid_label %}<dt>Paid</dt><dd>{{ order.paid_label }}</dd>{% endif %}
+                    </dl>
+                    {% if order.payment_method == 'cod' and order.payment_status == 'cod_pending' %}
+                    <div class="info"><span aria-hidden="true">💵</span><div>{{ 'Pay' if role == 'buyer' else 'Collect' }} <b>{{ money(order.total_amount) }}</b> in cash on delivery. This is not recorded as paid online.</div></div>
+                    {% elif order.is_demo %}
+                    <div class="sim-banner" style="margin:16px 0 0"><b>Simulation only.</b> No real money was transferred for this order and it is not paid.{% if role == 'seller' %} Don't send real goods on the basis of this payment.{% endif %}</div>
+                    {% elif order.payment_status == 'refund_pending' %}
+                    <div class="info"><span aria-hidden="true">↩️</span><div>This online payment must be refunded. Refunds are issued manually from the Razorpay Dashboard{% if role == 'buyer' %}; the seller or site team will process it{% endif %}.</div></div>
+                    {% endif %}
+                </section>
+            </div>
+
+            <aside class="box summary" aria-label="Order summary">
+                <h2>Item</h2>
+                <div class="summary-item">
+                    <img src="{{ order.image_url }}" alt="{{ order.product_title }}">
+                    <div>
+                        <h3>{{ order.product_title }}</h3>
+                        <p>{% if role == 'seller' %}Ordered by {{ order.buyer_name }}{% else %}Sold by {{ order.seller_name }}{% endif %}</p>
+                    </div>
+                </div>
+                <ul class="lines">
+                    <li>Price at purchase <b>{{ money(order.unit_price) }}</b></li>
+                    <li>Quantity <b>{{ order.quantity }}</b></li>
+                    <li>Payment <b>{{ order.payment_method_label }}</b></li>
+                    <li class="total">Total <b>{{ money(order.total_amount) }}</b></li>
+                </ul>
+            </aside>
+        </div>
+    </div>
+</main>
+</body>
+</html>

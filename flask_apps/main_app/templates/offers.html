@@ -1,164 +1,156 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>My Offers - Waste2Value</title>
-<style>
-    * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', Arial, sans-serif; }
-    body { min-height: 100vh; background: #f4f7f5; }
-
-    .navbar {
-        background: linear-gradient(135deg, #56ab2f, #2e7d32);
-        padding: 16px 30px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        color: white;
-    }
-    .navbar .logo { font-size: 20px; font-weight: 700; }
-    .navbar a {
-        background: rgba(255,255,255,0.2);
-        color: white;
-        text-decoration: none;
-        padding: 8px 16px;
-        border-radius: 6px;
-        font-size: 13px;
-        font-weight: 600;
-    }
-
-    .content { max-width: 900px; margin: 30px auto; padding: 0 20px; }
-
-    .tabs {
-        display: flex;
-        gap: 10px;
-        margin-bottom: 20px;
-    }
-
-    .tab {
-        padding: 10px 20px;
-        background: white;
-        border-radius: 8px;
-        text-decoration: none;
-        color: #555;
-        font-size: 14px;
-        font-weight: 600;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-    }
-
-    .tab.active {
-        background: #2e7d32;
-        color: white;
-    }
-
-    .offer-card {
-        background: white;
-        border-radius: 12px;
-        padding: 20px;
-        margin-bottom: 15px;
-        box-shadow: 0 3px 15px rgba(0,0,0,0.06);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 15px;
-    }
-
-    .offer-left h3 { font-size: 16px; color: #222; margin-bottom: 5px; }
-    .offer-left .meta { font-size: 13px; color: #888; }
-    .offer-left .price { font-size: 18px; font-weight: 700; color: #2e7d32; margin-top: 6px; }
-
-    .status-badge {
-        padding: 5px 14px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 600;
-        text-transform: capitalize;
-    }
-
-    .status-pending { background: #fff3e0; color: #e65100; }
-    .status-accepted { background: #e8f5e9; color: #2e7d32; }
-    .status-rejected { background: #fdecea; color: #d32f2f; }
-
-    .offer-actions { display: flex; gap: 8px; }
-
-    .btn-accept, .btn-reject {
-        padding: 8px 16px;
-        border: none;
-        border-radius: 6px;
-        font-size: 13px;
-        font-weight: 600;
-        cursor: pointer;
-    }
-
-    .btn-accept { background: #2e7d32; color: white; }
-    .btn-reject { background: #fdecea; color: #d32f2f; }
-
-    .empty-state {
-        text-align: center;
-        padding: 50px 20px;
-        color: #999;
-    }
-
-    .empty-state .icon { font-size: 45px; margin-bottom: 15px; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Offers | Waste2Value</title>
+    <style>
+        :root { --green:#287a50; --dark:#185b3a; --pale:#e9f5ec; --cream:#f7f8f1; --ink:#23352b; --muted:#68786d; --line:#dce6dd; --warning:#8a5b13; }
+        * { box-sizing:border-box; }
+        body { margin:0; background:var(--cream); font-family:Segoe UI,Arial,sans-serif; color:var(--ink); }
+        nav { padding:17px 6%; background:white; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+        .brand { color:var(--dark); font-weight:800; text-decoration:none; }
+        .navlinks { display:flex; gap:16px; flex-wrap:wrap; }
+        .navlinks a { color:var(--ink); text-decoration:none; }
+        main { max-width:1100px; margin:30px auto; padding:0 18px 36px; }
+        .back { display:inline-block; margin-bottom:18px; color:var(--dark); background:white; border:1px solid var(--line); padding:10px 14px; border-radius:10px; text-decoration:none; font-weight:700; }
+        .hero { background:linear-gradient(120deg,#e9f5ec,#fff); padding:26px; border-radius:17px; margin-bottom:22px; }
+        .hero h1 { margin:0 0 8px; }
+        .tabs,.controls { display:flex; gap:10px; flex-wrap:wrap; margin-top:16px; }
+        .btn { display:inline-block; border:0; border-radius:9px; padding:10px 14px; background:var(--green); color:white; font-weight:700; text-decoration:none; cursor:pointer; font:inherit; }
+        .secondary { background:white; color:var(--dark); border:1px solid var(--line); }
+        .muted { color:var(--muted); line-height:1.5; }
+        .section-title { margin:26px 0 12px; }
+        .offer-card { background:white; border:1px solid var(--line); border-radius:16px; padding:20px; margin:12px 0; box-shadow:0 7px 20px rgba(35,53,43,.05); }
+        .active-card { border:2px solid #78a984; background:linear-gradient(135deg,#f0f8f1,#fff 65%); }
+        .card-top { display:flex; align-items:center; gap:9px; flex-wrap:wrap; margin-bottom:10px; }
+        .badge,.status { display:inline-block; padding:5px 10px; border-radius:20px; background:var(--pale); color:var(--dark); font-size:.88rem; font-weight:700; }
+        .badge { background:#d9eedc; }
+        .offer-card h3 { margin:7px 0; }
+        .price { font-weight:800; color:var(--dark); font-size:1.12rem; }
+        .details { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:8px 20px; margin-top:12px; }
+        .details p { margin:4px 0; overflow-wrap:anywhere; }
+        .date-warning,.notice { margin:12px 0; padding:11px 14px; border-radius:9px; background:#fff4dc; color:var(--warning); line-height:1.5; }
+        .notice.success { background:var(--pale); color:var(--dark); }
+        .history { margin-top:30px; border:1px solid var(--line); border-radius:14px; background:#fff; }
+        .history summary { cursor:pointer; padding:16px 18px; color:var(--dark); font-weight:800; }
+        .history-list { padding:0 16px 12px; }
+        .history .offer-card { box-shadow:none; background:#fcfdfb; }
+        .empty { background:white; border:1px dashed #b7cbb9; border-radius:14px; padding:30px; text-align:center; }
+        @media(max-width:560px) { .offer-card { padding:16px; } .hero { padding:20px; } }
+    </style>
 </head>
 <body>
-
-<div class="navbar">
-    <div class="logo">♻️ Waste2Value</div>
-    <a href="/dashboard">← Back to Dashboard</a>
-</div>
-
-<div class="content">
-    <div class="tabs">
-        <a href="/offers?type=received" class="tab {% if offer_type == 'received' %}active{% endif %}">Offers Received</a>
-        <a href="/offers?type=sent" class="tab {% if offer_type == 'sent' %}active{% endif %}">Offers Sent</a>
-    </div>
-
-    {% if offers %}
-        {% for offer in offers %}
-        <div class="offer-card">
-            <div class="offer-left">
-                <h3>{{ offer[0] }}</h3>
-                <div class="meta">
-                    {% if offer_type == 'received' %}
-                        Offer from {{ offer[1] }}
-                    {% else %}
-                        Seller: {{ offer[1] }}
-                    {% endif %}
-                </div>
-                <div class="price">₹{{ offer[2] }}</div>
+    <nav>
+        <a class="brand" href="{{ url_for('dashboard') }}">♻ Waste2Value</a>
+        <div class="navlinks">
+            <a href="{{ url_for('marketplace') }}">Marketplace</a>
+            <a href="{{ url_for('my_listings') }}">My Listings</a>
+            <a href="{{ url_for('offers') }}">Offers</a>
+        </div>
+    </nav>
+    <main>
+        <a class="back" href="{{ url_for('dashboard') }}">← Back to Dashboard</a>
+        <section class="hero">
+            <h1>{{ 'Offers Received' if offer_type == 'received' else 'Offers Sent' }}</h1>
+            <p class="muted">Accepted arrangements stay at the top. Older and closed offers remain available in history.</p>
+            <div class="tabs">
+                <a class="btn {% if offer_type != 'received' %}secondary{% endif %}" href="{{ url_for('offers', type='received') }}">Offers Received</a>
+                <a class="btn {% if offer_type == 'received' %}secondary{% endif %}" href="{{ url_for('offers', type='sent') }}">Offers Sent</a>
+                <a class="btn secondary" href="{{ url_for('marketplace') }}">Marketplace</a>
             </div>
+        </section>
 
-            {% if offer_type == 'received' and offer[3] == 'pending' %}
-                <div class="offer-actions">
-                    <form method="POST" action="/offer/respond/{{ offer[4] }}">
-                        <input type="hidden" name="action" value="accepted">
-                        <button type="submit" class="btn-accept">Accept</button>
-                    </form>
-                    <form method="POST" action="/offer/respond/{{ offer[4] }}">
-                        <input type="hidden" name="action" value="rejected">
-                        <button type="submit" class="btn-reject">Reject</button>
-                    </form>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <div class="notice {{ category }}" role="status">{{ message }}</div>
+            {% endfor %}
+        {% endwith %}
+
+        {% if active_arrangements %}
+            <section aria-labelledby="active-heading">
+                <h2 class="section-title" id="active-heading">Active arrangement</h2>
+                {% for offer in active_arrangements %}
+                    <article class="offer-card active-card">
+                        <div class="card-top"><span class="badge">Active arrangement</span><span class="status">Accepted</span></div>
+                        <h3>{{ offer.title }}</h3>
+                        <div class="price">Offer: ₹{{ '%.2f'|format(offer.offer_price|float) }}</div>
+                        <div class="details">
+                            <p><strong>{{ 'Buyer' if offer_type == 'received' else 'Seller' }}:</strong> {{ offer.other_name }}</p>
+                            {% if offer.pickup_id %}
+                                <p><strong>Pickup status:</strong> {{ offer.pickup_status|title if offer.pickup_status else 'Scheduled' }}</p>
+                                <p><strong>Pickup date:</strong> {{ offer.pickup_date_display or 'Date not recorded' }}</p>
+                                <p><strong>Pickup address:</strong> {{ offer.pickup_address or 'Address not recorded' }}</p>
+                            {% else %}
+                                <p><strong>Pickup:</strong> Not scheduled yet</p>
+                            {% endif %}
+                        </div>
+                        {% if offer.pickup_date_warning %}<div class="date-warning" role="status">{{ offer.pickup_date_warning }}</div>{% endif %}
+                        {% if not offer.pickup_id and offer_type == 'received' %}
+                            {% if offer.listing_status == 'available' %}
+                                <div class="controls"><a class="btn" href="{{ url_for('schedule_pickup', offer_id=offer.offer_id) }}">Schedule Pickup</a></div>
+                            {% else %}
+                                <p class="muted">This listing is no longer available, so a pickup cannot be scheduled here.</p>
+                            {% endif %}
+                        {% endif %}
+                    </article>
+                {% endfor %}
+            </section>
+        {% endif %}
+
+        {% if pending_offers %}
+            <section aria-labelledby="pending-heading">
+                <h2 class="section-title" id="pending-heading">Pending offers</h2>
+                {% for offer in pending_offers %}
+                    <article class="offer-card">
+                        <div class="card-top"><span class="status">Pending</span></div>
+                        <h3>{{ offer.title }}</h3>
+                        <div class="price">Offer: ₹{{ '%.2f'|format(offer.offer_price|float) }}</div>
+                        <p class="muted">{{ 'Buyer' if offer_type == 'received' else 'Seller' }}: {{ offer.other_name }}</p>
+                        {% if offer_type == 'received' and offer.can_respond %}
+                            <div class="controls">
+                                <form method="post" action="{{ url_for('offer_respond', offer_id=offer.offer_id) }}"><button class="btn" name="action" value="accepted" type="submit">Accept</button></form>
+                                <form method="post" action="{{ url_for('offer_respond', offer_id=offer.offer_id) }}"><button class="btn secondary" name="action" value="rejected" type="submit">Decline</button></form>
+                            </div>
+                        {% else %}
+                            <p class="muted">Waiting for the seller to respond.</p>
+                        {% endif %}
+                    </article>
+                {% endfor %}
+            </section>
+        {% endif %}
+
+        {% if history_offers %}
+            <details class="history">
+                <summary>Offer History ({{ history_offers|length }})</summary>
+                <div class="history-list">
+                    {% for offer in history_offers %}
+                        <article class="offer-card">
+                            <div class="card-top"><span class="status">{{ offer.status|title }}</span></div>
+                            <h3>{{ offer.title }}</h3>
+                            <div class="price">Offer: ₹{{ '%.2f'|format(offer.offer_price|float) }}</div>
+                            <p class="muted">{{ 'Buyer' if offer_type == 'received' else 'Seller' }}: {{ offer.other_name }}</p>
+                            <p class="muted">{{ offer.history_reason }}</p>
+                            {% if offer.pickup_id %}
+                                <div class="details">
+                                    <p><strong>Pickup date:</strong> {{ offer.pickup_date_display or 'Date not recorded' }}</p>
+                                    <p><strong>Pickup address:</strong> {{ offer.pickup_address or 'Address not recorded' }}</p>
+                                </div>
+                                {% if offer.pickup_date_warning %}<div class="date-warning" role="status">{{ offer.pickup_date_warning }}</div>{% endif %}
+                            {% endif %}
+                        </article>
+                    {% endfor %}
                 </div>
-            {% elif offer[3] == 'accepted' %}
-                {% if offer[5] %}
-                    <span class="status-badge status-accepted">Pickup: {{ offer[6] }}</span>
-                {% else %}
-                    <a href="/pickup/schedule/{{ offer[4] }}" class="btn-accept" style="text-decoration:none; display:inline-block;">Schedule Pickup</a>
-                {% endif %}
-            {% else %}
-                <span class="status-badge status-{{ offer[3] }}">{{ offer[3] }}</span>
-            {% endif %}
-        </div>
-        {% endfor %}
-    {% else %}
-        <div class="empty-state">
-            <div class="icon">📭</div>
-            <p>No offers {{ 'received' if offer_type == 'received' else 'sent' }} yet.</p>
-        </div>
-    {% endif %}
-</div>
+            </details>
+        {% endif %}
 
+        {% if not active_arrangements and not pending_offers and not history_offers %}
+            <div class="empty">
+                <h2>No offers yet</h2>
+                <p class="muted">{% if offer_type == 'received' %}Offers made on your listings will appear here.{% else %}Offers you make on marketplace items will appear here.{% endif %}</p>
+                <a class="btn" href="{{ url_for('marketplace') }}">Browse Marketplace</a>
+            </div>
+        {% endif %}
+    </main>
 </body>
 </html>

@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Handmade &amp; Upcycled - Waste2Value</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+{% include 'partials/diy_styles.html' %}
+</head>
+<body>
+
+{% include 'partials/diy_nav.html' %}
+
+<main>
+    <!-- ---------- hero ---------- -->
+    <section class="hero">
+        <div class="wrap">
+            <div>
+                <span class="eyebrow">Handmade · Upcycled · One of a kind</span>
+                <h1>Beautiful things, made from what was <em>left behind.</em></h1>
+                <p class="lede">A small shop for pieces our community has crafted from bottles, jars, fabric scraps and old tins. Every item gives waste a second life.</p>
+                <div class="cta-row">
+                    <a href="#shop" class="btn btn-primary">Shop the collection</a>
+                    <a href="#sell" class="btn btn-ghost">Sell your creation</a>
+                </div>
+                <div class="hero-notes">
+                    <div><strong>Upcycled</strong>from household waste</div>
+                    <div><strong>Handmade</strong>by local makers</div>
+                    <div><strong>One of a kind</strong>no two alike</div>
+                </div>
+            </div>
+
+            <div class="hero-art" aria-hidden="true">
+                <svg viewBox="0 0 400 410" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <!-- arch backdrop -->
+                    <path d="M40 410V190C40 100 112 28 200 28s160 72 160 162v220Z" fill="#e7ebe0"/>
+                    <circle cx="300" cy="96" r="34" fill="#f6e4da"/>
+                    <!-- shelf -->
+                    <rect x="58" y="318" width="284" height="12" rx="6" fill="#c9b79c"/>
+                    <!-- bottle vase (terracotta) -->
+                    <path d="M118 318c-22 0-32-14-32-40 0-30 18-46 18-74v-36h28v36c0 28 18 44 18 74 0 26-10 40-32 40Z" fill="#c8775a"/>
+                    <rect x="104" y="158" width="28" height="12" rx="4" fill="#a95d42"/>
+                    <path d="M98 262c12 6 28 6 40 0" stroke="#f6e4da" stroke-width="3" stroke-linecap="round"/>
+                    <path d="M96 282c14 6 30 6 44 0" stroke="#f6e4da" stroke-width="3" stroke-linecap="round"/>
+                    <!-- stems from bottle -->
+                    <path d="M118 160c-4-30-22-52-44-62" stroke="#4f5d46" stroke-width="3" stroke-linecap="round"/>
+                    <path d="M120 160c6-36 26-60 50-70" stroke="#4f5d46" stroke-width="3" stroke-linecap="round"/>
+                    <ellipse cx="78" cy="100" rx="16" ry="8" transform="rotate(-35 78 100)" fill="#8a9a7b"/>
+                    <ellipse cx="164" cy="92" rx="17" ry="8" transform="rotate(-20 164 92)" fill="#8a9a7b"/>
+                    <ellipse cx="102" cy="124" rx="12" ry="6" transform="rotate(30 102 124)" fill="#4f5d46"/>
+                    <ellipse cx="144" cy="122" rx="12" ry="6" transform="rotate(-40 144 122)" fill="#4f5d46"/>
+                    <!-- tin can planter (sage) -->
+                    <rect x="176" y="250" width="70" height="68" rx="8" fill="#8a9a7b"/>
+                    <rect x="176" y="250" width="70" height="10" rx="5" fill="#4f5d46"/>
+                    <path d="M186 276h50M186 292h50" stroke="#e7ebe0" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="2 7"/>
+                    <path d="M211 250c0-24-10-40-26-48M211 250c2-28 14-46 32-52M211 250v-56" stroke="#4f5d46" stroke-width="3" stroke-linecap="round"/>
+                    <circle cx="211" cy="190" r="10" fill="#c8775a"/>
+                    <circle cx="211" cy="190" r="4" fill="#faf6ef"/>
+                    <ellipse cx="186" cy="204" rx="11" ry="6" transform="rotate(30 186 204)" fill="#8a9a7b"/>
+                    <ellipse cx="240" cy="200" rx="11" ry="6" transform="rotate(-30 240 200)" fill="#8a9a7b"/>
+                    <!-- glass jar lantern -->
+                    <rect x="264" y="236" width="62" height="82" rx="14" fill="#fffdf9" stroke="#c9b79c" stroke-width="2.5"/>
+                    <rect x="270" y="226" width="50" height="14" rx="4" fill="#c9b79c"/>
+                    <path d="M282 226c0-22 26-22 26 0" stroke="#c9b79c" stroke-width="2.5"/>
+                    <rect x="287" y="282" width="16" height="26" rx="3" fill="#f6e4da"/>
+                    <path d="M295 266c-6 8-6 14 0 16 6-2 6-8 0-16Z" fill="#c8775a"/>
+                    <!-- sparkles -->
+                    <path d="M330 168l4 10 10 4-10 4-4 10-4-10-10-4 10-4Z" fill="#c8775a" opacity=".7"/>
+                    <path d="M70 230l3 7 7 3-7 3-3 7-3-7-7-3 7-3Z" fill="#8a9a7b" opacity=".8"/>
+                </svg>
+                <div class="hero-badge">
+                    <span class="dot">🌿</span>
+                    <div><b>Second life, first class</b>Crafted from reclaimed materials</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ---------- shop ---------- -->
+    <section class="shop" id="shop">
+        <div class="wrap">
+            {% if added %}
+            <div class="notice" role="status">✨ Your creation is now live in the collection. Thank you for giving waste a second life!</div>
+            {% endif %}
+
+            <div class="section-head">
+                <div>
+                    <div class="kicker">The collection</div>
+                    <h2>{{ categories[selected_category] if selected_category else 'Handmade, with heart' }}</h2>
+                </div>
+                <div class="count">{{ products|length }} piece{{ '' if products|length == 1 else 's' }}</div>
+            </div>
+
+            <ul class="filters" aria-label="Filter by category">
+                <li><a href="{{ url_for('diy_marketplace') }}#shop" {% if not selected_category %}aria-current="page"{% endif %}>All pieces</a></li>
+                {% for key, label in categories.items() %}
+                <li><a href="{{ url_for('diy_marketplace', category=key) }}#shop" {% if selected_category == key %}aria-current="page"{% endif %}>{{ label }}</a></li>
+                {% endfor %}
+            </ul>
+
+            {% if products %}
+            <div class="grid">
+                {% for p in products %}
+                <article class="card{{ ' is-sold' if p.status == 'sold' else '' }}">
+                    <div class="card-media">
+                        <img src="{{ p.image_url }}" alt="{{ p.title }}" loading="lazy">
+                        <span class="chip">{{ p.category_label }}</span>
+                        {% if p.status == 'reserved' %}<span class="chip chip-status">Reserved</span>
+                        {% elif p.status == 'sold' %}<span class="chip chip-status">Sold</span>{% endif %}
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">{{ p.title }}</h3>
+                        {% if p.description %}<p class="card-desc">{{ p.description }}</p>{% endif %}
+                        <div class="card-foot">
+                            <div class="seller">
+                                <span class="avatar" aria-hidden="true">{{ (p.seller or '?')[:1]|upper }}</span>
+                                <span class="name">by {{ p.seller }}</span>
+                            </div>
+                            <div class="price">{% if p.is_free %}Free{% else %}₹{{ '{:,.2f}'.format(p.price) }}{% endif %}</div>
+                        </div>
+                        <div class="card-action">
+                            {% if p.status == 'sold' %}
+                                <span class="card-note">Sold{% if p.is_own %} · your listing{% endif %}</span>
+                            {% elif p.is_own %}
+                                <span class="card-note">Your listing</span>
+                            {% elif p.status != 'available' %}
+                                <span class="card-note">Reserved by another buyer</span>
+                            {% else %}
+                                <a href="{{ url_for('diy_checkout', product_id=p.id) }}" class="btn btn-primary btn-sm">{{ 'Request this free item' if p.is_free else 'Buy Now' }}</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </article>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty">
+                <svg width="88" height="88" viewBox="0 0 88 88" fill="none" aria-hidden="true">
+                    <circle cx="44" cy="44" r="44" fill="#e7ebe0"/>
+                    <path d="M44 70c-10 0-16-6-16-18 0-12 8-18 8-28v-8h16v8c0 10 8 16 8 28 0 12-6 18-16 18Z" fill="#c8775a"/>
+                    <path d="M44 16c-2-8-8-12-14-12M44 16c2-8 8-12 14-12" stroke="#4f5d46" stroke-width="2.5" stroke-linecap="round"/>
+                </svg>
+                <h3>{{ 'Nothing in ' ~ categories[selected_category] ~ ' yet' if selected_category else 'The shelves are waiting' }}</h3>
+                <p>Be the first maker to share a piece here. Turn a bottle, jar or fabric scrap into something someone will treasure.</p>
+                <a href="#sell" class="btn btn-primary">Sell your creation</a>
+            </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- ---------- sell ---------- -->
+    <section class="sell" id="sell">
+        <div class="wrap">
+            <div class="sell-intro">
+                <div class="kicker">For makers</div>
+                <h2>Sell your creation</h2>
+                <p>Made something lovely from waste? Share it with the community in under a minute.</p>
+                <ol class="steps">
+                    <li><div><b>Snap a photo</b><span>Natural light works best.</span></div></li>
+                    <li><div><b>Tell its story</b><span>What was it before, and what is it now?</span></div></li>
+                    <li><div><b>Set a fair price</b><span>Your piece appears in the collection right away.</span></div></li>
+                </ol>
+            </div>
+
+            {% if logged_in %}
+            <form class="panel" method="POST" action="{{ url_for('diy_marketplace') }}#sell" enctype="multipart/form-data">
+                {% include 'partials/diy_form_guard.html' %}
+                {% if errors %}
+                <div class="errors" role="alert">
+                    <ul>{% for e in errors %}<li>{{ e }}</li>{% endfor %}</ul>
+                </div>
+                {% endif %}
+
+                <div class="field">
+                    <label for="title">Product name</label>
+                    <input type="text" id="title" name="title" maxlength="150" required value="{{ form.title }}" placeholder="e.g. Glass bottle table lamp">
+                </div>
+
+                <div class="field-row">
+                    <div class="field">
+                        <label for="category">Category</label>
+                        <select id="category" name="category" required>
+                            <option value="" disabled {% if not form.category %}selected{% endif %}>Choose a category</option>
+                            {% for key, label in categories.items() %}
+                            <option value="{{ key }}" {% if form.category == key %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label for="price">Price</label>
+                        <div class="price-input">
+                            <span aria-hidden="true">₹</span>
+                            <input type="number" id="price" name="price" min="{{ '0' if form.is_free == 'yes' else '0.01' }}" max="99999999.99" step="0.01" inputmode="decimal" required
+                                   value="{{ '0' if form.is_free == 'yes' else form.price }}" {% if form.is_free == 'yes' %}readonly{% endif %} placeholder="0.00" aria-describedby="price-hint">
+                        </div>
+                        <label class="free-toggle">
+                            <input type="checkbox" id="is_free" name="is_free" value="yes" {% if form.is_free == 'yes' %}checked{% endif %}>
+                            This is a free item
+                        </label>
+                        <small class="field-hint" id="price-hint">Up to 2 decimal places. Free items are listed at ₹0 and buyers send a request.</small>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="description">Description <span class="opt">(optional)</span></label>
+                    <textarea id="description" name="description" maxlength="2000" placeholder="Materials used, size, how it was made…">{{ form.description }}</textarea>
+                </div>
+
+                <div class="field">
+                    <label for="image">Product photo</label>
+                    <div class="drop">
+                        <div class="drop-thumb" id="dropThumb" aria-hidden="true">
+                            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#8a9a7b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="9" cy="10" r="1.6"/><path d="m21 16-5-5-8 8"/></svg>
+                        </div>
+                        <div class="drop-text" id="dropText"><b>Choose a photo</b>PNG, JPG, GIF or WEBP · up to 5 MB</div>
+                        <input type="file" id="image" name="image" accept="image/png,image/jpeg,image/gif,image/webp" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">List my creation</button>
+            </form>
+            {% else %}
+            <div class="panel login-panel">
+                <svg width="64" height="64" viewBox="0 0 64 64" fill="none" aria-hidden="true" style="margin:0 auto"><circle cx="32" cy="32" r="32" fill="#f6e4da"/><path d="M20 44c0-14 9-22 24-24-2 15-10 24-24 24Z" fill="#c8775a"/><path d="M20 44l12-12" stroke="#fffdf9" stroke-width="2.4" stroke-linecap="round"/></svg>
+                <h3>Join to start selling</h3>
+                <p>Log in to your Waste2Value account to list your handmade pieces.</p>
+                <div class="cta-row">
+                    <a href="{{ url_for('login') }}" class="btn btn-primary">Log in</a>
+                    <a href="{{ url_for('register') }}" class="btn btn-ghost">Create account</a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </section>
+</main>
+
+<footer>
+    <div class="wrap">
+        <span>© Waste2Value Handmade · Made from what was left behind</span>
+        <span><a href="{{ url_for('recycle') }}">DIY Ideas</a> · <a href="{{ url_for('marketplace') }}">Waste Marketplace</a></span>
+    </div>
+</footer>
+
+<script>
+    // Free items are fixed at ₹0; paid items must be more than ₹0.
+    // (Convenience only: the server validates every price again.)
+    (function () {
+        var free = document.getElementById('is_free');
+        var price = document.getElementById('price');
+        if (!free || !price) return;
+        var lastPaid = free.checked ? '' : price.value;
+        free.addEventListener('change', function () {
+            if (free.checked) {
+                lastPaid = price.value;
+                price.value = '0';
+                price.min = '0';
+                price.readOnly = true;
+            } else {
+                price.value = lastPaid === '0' ? '' : lastPaid;
+                price.min = '0.01';
+                price.readOnly = false;
+                price.focus();
+            }
+        });
+    })();
+
+    // Show a thumbnail of the chosen product photo.
+    (function () {
+        var input = document.getElementById('image');
+        if (!input) return;
+        input.addEventListener('change', function () {
+            var file = input.files && input.files[0];
+            var thumb = document.getElementById('dropThumb');
+            var text = document.getElementById('dropText');
+            if (!file) return;
+            var img = document.createElement('img');
+            img.alt = '';
+            img.src = URL.createObjectURL(file);
+            thumb.replaceChildren(img);
+            text.replaceChildren();
+            var b = document.createElement('b');
+            b.textContent = file.name;
+            text.append(b, (file.size / 1048576).toFixed(1) + ' MB' + (file.size > 5 * 1048576 ? ' · too large, max 5 MB' : ''));
+        });
+    })();
+</script>
+</body>
+</html>

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ data.label }} DIY Ideas - Waste2Value</title>
+<style>
+    * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', Arial, sans-serif; }
+    body { min-height:100vh; background:#f4f7f5; }
+    .navbar { background:linear-gradient(135deg,#56ab2f,#2e7d32); padding:16px 30px; display:flex; justify-content:space-between; align-items:center; color:white; }
+    .navbar .logo { font-size:20px; font-weight:700; }
+    .navbar a { background:rgba(255,255,255,.2); color:white; text-decoration:none; padding:8px 16px; border-radius:6px; font-size:13px; font-weight:600; margin-left:8px; }
+    .content { max-width:1100px; margin:0 auto; padding:30px; }
+    .header { display:flex; align-items:center; gap:18px; margin-bottom:25px; flex-wrap:wrap; }
+    .header h2 { color:#2e7d32; }
+    .header p { color:#777; font-size:14px; }
+    .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:20px; }
+    .idea { background:white; border-radius:14px; padding:20px; box-shadow:0 5px 20px rgba(0,0,0,.08); display:flex; flex-direction:column; }
+    .idea-img { width:100%; height:130px; object-fit:contain; border-radius:10px; margin-bottom:12px; background:#f4f7f5; }
+    .idea h3 { color:#333; font-size:17px; margin-bottom:10px; }
+    .idea h4 { font-size:12px; text-transform:uppercase; letter-spacing:.5px; color:#2e7d32; margin:10px 0 5px; }
+    .idea ul, .idea ol { padding-left:20px; font-size:13px; color:#555; line-height:1.6; }
+    .idea-description { color:#5f6b61; font-size:14px; line-height:1.6; margin:0 0 8px; }
+    .idea-link { display:inline-block; margin-top:auto; padding:9px 13px; border-radius:8px; background:#2e7d32; color:white; text-decoration:none; font-size:13px; font-weight:700; }
+    .tag { display:inline-block; background:#e8f5e9; color:#2e7d32; border-radius:20px; padding:2px 10px; font-size:12px; margin:2px 2px 2px 0; }
+    .yt { margin-top:auto; padding-top:14px; }
+    .yt a { display:inline-block; background:#ff0000; color:white; text-decoration:none; padding:7px 14px; border-radius:8px; font-size:12px; font-weight:600; }
+    .section { margin:40px 0 20px; color:#2e7d32; }
+    .videos { margin-top:35px; text-align:center; background:white; border-radius:14px; padding:25px; box-shadow:0 5px 20px rgba(0,0,0,.08); }
+    .videos p { color:#666; font-size:14px; margin-bottom:15px; }
+    .videos a.big { display:inline-block; background:#ff0000; color:white; text-decoration:none; padding:11px 20px; border-radius:8px; font-weight:600; font-size:14px; }
+    .cta { text-align:center; margin:40px 0 10px; }
+    .cta a { display:inline-block; background:linear-gradient(135deg,#56ab2f,#2e7d32); color:white; text-decoration:none; padding:15px 34px; border-radius:10px; font-size:16px; font-weight:700; box-shadow:0 5px 15px rgba(46,125,50,.3); }
+</style>
+
+<!-- Waste2Value UI-only theme overrides: visual styles only; existing HTML, routes and behavior remain unchanged. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
+<style id="waste2value-ui-only-theme">
+:root {
+  --w2v-cream: #faf6ef;
+  --w2v-paper: #fffdf9;
+  --w2v-ink: #2f2a24;
+  --w2v-muted: #6b6258;
+  --w2v-line: #e8dfd1;
+  --w2v-sage: #8a9a7b;
+  --w2v-sage-deep: #4f5d46;
+  --w2v-sage-wash: #e7ebe0;
+  --w2v-terra: #c8775a;
+  --w2v-terra-deep: #a95d42;
+  --w2v-shadow: 0 8px 24px rgba(47,42,36,.07);
+}
+html { scroll-behavior: smooth; }
+body {
+  background: var(--w2v-cream) !important;
+  color: var(--w2v-ink) !important;
+  font-family: 'DM Sans', 'Segoe UI', sans-serif !important;
+}
+h1, h2, h3, h4, .logo, .brand, .hero-title {
+  font-family: 'Fraunces', Georgia, serif !important;
+}
+.navbar, header.navbar {
+  background: var(--w2v-paper) !important;
+  color: var(--w2v-ink) !important;
+  border-bottom: 1px solid var(--w2v-line) !important;
+  box-shadow: 0 3px 16px rgba(47,42,36,.04) !important;
+}
+.navbar .logo, .navbar .user-info, .navbar .logo a {
+  color: var(--w2v-ink) !important;
+}
+.navbar a {
+  border-radius: 999px !important;
+  transition: background .2s ease, transform .2s ease !important;
+}
+.navbar a:hover { transform: translateY(-1px); }
+.content, main, .container, .page-container {
+  color: var(--w2v-ink);
+}
+.welcome-card, .card, .listing-card, .form-card, .stat-card, .panel,
+.order-card, .profile-card, .idea-card, .pickup-card {
+  background: var(--w2v-paper) !important;
+  border: 1px solid var(--w2v-line) !important;
+  border-radius: 20px !important;
+  box-shadow: var(--w2v-shadow) !important;
+}
+.welcome-card h2, .section-title, .page-title, .welcome-title {
+  color: var(--w2v-sage-deep) !important;
+}
+p, .muted, .subtitle, .description { color: var(--w2v-muted); }
+button, input[type="submit"], .btn, a.btn, .button, .primary-btn {
+  border-radius: 999px !important;
+  font-family: 'DM Sans', 'Segoe UI', sans-serif !important;
+  transition: transform .18s ease, box-shadow .18s ease, background .18s ease !important;
+}
+button:hover, input[type="submit"]:hover, .btn:hover, a.btn:hover,
+.button:hover, .primary-btn:hover {
+  transform: translateY(-1px);
+}
+.btn-primary, .primary-btn, button[type="submit"], input[type="submit"] {
+  background: var(--w2v-sage-deep) !important;
+  border-color: var(--w2v-sage-deep) !important;
+  color: white !important;
+}
+.btn-primary:hover, .primary-btn:hover, button[type="submit"]:hover,
+input[type="submit"]:hover { background: #3e4a37 !important; }
+.btn-secondary, .secondary-btn {
+  background: var(--w2v-sage-wash) !important;
+  border-color: var(--w2v-line) !important;
+  color: var(--w2v-sage-deep) !important;
+}
+input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]),
+select, textarea {
+  border: 1px solid #d9cebd !important;
+  border-radius: 12px !important;
+  background: var(--w2v-paper) !important;
+  color: var(--w2v-ink) !important;
+  font: inherit;
+}
+input:focus, select:focus, textarea:focus {
+  outline: 2px solid rgba(138,154,123,.35) !important;
+  border-color: var(--w2v-sage) !important;
+}
+table {
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  overflow: hidden;
+  border-radius: 14px;
+  background: var(--w2v-paper);
+}
+th { background: var(--w2v-sage-wash) !important; color: var(--w2v-sage-deep) !important; }
+th, td { border-color: var(--w2v-line) !important; }
+.alert, .flash, .message {
+  border-radius: 12px !important;
+}
+a { transition: color .18s ease; }
+a:hover { color: var(--w2v-terra-deep); }
+@media (max-width: 700px) {
+  .navbar { flex-wrap: wrap; gap: 12px; padding: 14px 18px !important; }
+  .content, main { padding-left: 16px !important; padding-right: 16px !important; }
+  .welcome-card, .card, .listing-card, .form-card, .stat-card, .panel {
+    border-radius: 16px !important;
+  }
+  table { display: block; max-width: 100%; overflow-x: auto; }
+}
+</style>
+
+</head>
+<body>
+<div class="navbar">
+    <div class="logo">♻️ Waste2Value</div>
+    <div><a href="/recycle">← All categories</a><a href="/dashboard">Dashboard</a><a href="/logout">Logout</a></div>
+</div>
+
+<div class="content">
+  <div class="header">
+    <div>
+      <h2>{{ data.icon }} {{ data.label }} DIY Recycling Ideas</h2>
+      <p>{{ data.ideas|length }} ideas to turn your waste into something useful</p>
+    </div>
+  </div>
+
+  <div class="grid">
+    {% for idea in data.ideas %}
+    <div class="idea">
+      <img class="idea-img" src="{{ url_for('static', filename=idea.image) }}" alt="{{ idea.title }}">
+      <h3>{{ idea.emoji }} {{ idea.title }}</h3>
+      <p class="idea-description">{{ idea.description|truncate(160) }}</p>
+      <h4>Materials</h4>
+      <div>{% for m in idea.materials %}<span class="tag">{{ m }}</span>{% endfor %}</div>
+      <a class="idea-link" href="{{ url_for('recycle_idea_detail', category=category, idea_index=loop.index0) }}">View full steps and safety notes</a>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="videos">
+    <p>Want to see how it's done? Watch {{ data.label|lower }} recycling tutorials on YouTube.</p>
+    <a class="big" href="{{ general_youtube }}" target="_blank" rel="noopener">▶ Watch YouTube Tutorials</a>
+  </div>
+
+  <div class="cta"><a href="/marketplace">🛒 Buy &amp; Sell Products</a></div>
+</div>
+</body>
+</html>

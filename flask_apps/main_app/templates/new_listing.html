@@ -1,151 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>Create Listing - Waste2Value</title>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Create Listing | Waste2Value</title>
 <style>
-    * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', Arial, sans-serif; }
-
-    body {
-        min-height: 100vh;
-        background: #f4f7f5;
-    }
-
-    .navbar {
-        background: linear-gradient(135deg, #56ab2f, #2e7d32);
-        padding: 16px 30px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        color: white;
-    }
-
-    .navbar .logo { font-size: 20px; font-weight: 700; }
-
-    .navbar a {
-        background: rgba(255,255,255,0.2);
-        color: white;
-        text-decoration: none;
-        padding: 8px 16px;
-        border-radius: 6px;
-        font-size: 13px;
-        font-weight: 600;
-    }
-
-    .content {
-        max-width: 500px;
-        margin: 40px auto;
-        padding: 0 20px;
-    }
-
-    .form-card {
-        background: white;
-        padding: 35px;
-        border-radius: 16px;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-    }
-
-    .form-card h2 {
-        color: #2e7d32;
-        margin-bottom: 25px;
-    }
-
-    .form-group { margin-bottom: 18px; }
-
-    label {
-        display: block;
-        font-size: 14px;
-        font-weight: 600;
-        color: #333;
-        margin-bottom: 6px;
-    }
-
-    input, select, textarea {
-        width: 100%;
-        padding: 12px 14px;
-        border: 1.5px solid #ddd;
-        border-radius: 8px;
-        font-size: 14px;
-        outline: none;
-        font-family: inherit;
-    }
-
-    input:focus, select:focus, textarea:focus { border-color: #56ab2f; }
-
-    textarea { resize: vertical; min-height: 80px; }
-
-    button {
-        width: 100%;
-        padding: 13px;
-        background: linear-gradient(135deg, #56ab2f, #2e7d32);
-        color: white;
-        border: none;
-        border-radius: 8px;
-        font-size: 16px;
-        font-weight: 600;
-        cursor: pointer;
-        margin-top: 8px;
-    }
-
-    button:hover { opacity: 0.9; }
-</style>
-</head>
-<body>
-
-<div class="navbar">
-    <div class="logo">♻️ Waste2Value</div>
-    <a href="/dashboard">← Back to Dashboard</a>
-</div>
-
-<div class="content">
-    <div class="form-card">
-        <h2>Create New Listing</h2>
-        <form method="POST" action="/listing/new" enctype="multipart/form-data">
-            <div class="form-group">
-                <label>Item Title</label>
-                <input type="text" name="title" placeholder="e.g. Old Plastic Bottles (5kg)" required>
-            </div>
-
-            <div class="form-group">
-                <label>Category</label>
-                <select name="category" required>
-                    <option value="plastic">Plastic</option>
-                    <option value="paper">Paper</option>
-                    <option value="glass">Glass</option>
-                    <option value="metal">Metal</option>
-                    <option value="e-waste">E-Waste</option>
-                    <option value="clothes">Clothes</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label>Description</label>
-                <textarea name="description" placeholder="Describe the item..."></textarea>
-            </div>
-
-            <div class="form-group">
-                <label>Price (₹)</label>
-                <input type="number" step="0.01" name="price" placeholder="e.g. 150" required>
-            </div>
-
-            <div class="form-group">
-                <label>Condition</label>
-                <select name="item_condition">
-                    <option value="new">New</option>
-                    <option value="used">Used</option>
-                    <option value="damaged">Damaged</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label>Item Image</label>
-                <input type="file" name="image" accept="image/*">
-            </div>
-
-            <button type="submit">Post Listing</button>
-        </form>
-    </div>
-</div>
-
-</body>
-</html>
+:root{--green:#287a50;--dark:#185b3a;--pale:#e9f5ec;--cream:#f7f8f1;--ink:#23352b;--muted:#68786d;--line:#dce6dd}
+*{box-sizing:border-box}body{margin:0;background:var(--cream);font-family:Segoe UI,Arial,sans-serif;color:var(--ink)}nav{padding:17px 6%;background:#fff;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}.brand{color:var(--dark);font-weight:800;text-decoration:none}.navlinks{display:flex;gap:16px;flex-wrap:wrap}.navlinks a{color:var(--ink);text-decoration:none}
+main{max-width:850px;margin:30px auto;padding:0 18px}.back{display:inline-block;margin-bottom:18px;color:var(--dark);background:white;border:1px solid var(--line);padding:10px 14px;border-radius:10px;text-decoration:none;font-weight:700}.card{background:white;padding:clamp(20px,4vw,36px);border:1px solid var(--line);border-radius:18px;box-shadow:0 8px 24px #203c2510}.card h1{margin-top:0}.sub{color:var(--muted);line-height:1.5}.field{margin:18px 0}.field label{display:block;font-weight:700;margin-bottom:7px}.field input,.field select,.field textarea{width:100%;padding:12px;border:1px solid var(--line);border-radius:9px;font:inherit;background:#fff}.field textarea{min-height:120px;resize:vertical}.hint{font-size:.9rem;color:var(--muted);margin-top:5px}.errors{background:#fff0ee;color:#9f241b;padding:14px 18px;border-radius:10px;margin:16px 0}.errors ul{padding-left:20px}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}.btn{display:inline-block;padding:12px 17px;border:0;border-radius:10px;background:var(--green);color:white;font-weight:700;text-decoration:none;cursor:pointer;font:inherit}.secondary{background:white;color:var(--dark);border:1px solid var(--line)}@media(max-width:520px){.actions>*{width:100%;text-align:center}}
+</style></head><body>
+<nav><a class="brand" href="{{ url_for('dashboard') }}">♻ Waste2Value</a><div class="navlinks"><a href="{{ url_for('marketplace') }}">Marketplace</a><a href="{{ url_for('my_listings') }}">My Listings</a><a href="{{ url_for('offers') }}">Offers</a></div></nav>
+<main><a class="back" href="{{ url_for('marketplace') }}">← Back to Marketplace</a><section class="card"><h1>Create a Listing 🌱</h1><p class="sub">Share reusable or recyclable material details with the Waste2Value community.</p>
+{% if errors %}<div class="errors" role="alert"><strong>Please fix these items:</strong><ul>{% for error in errors %}<li>{{ error }}</li>{% endfor %}</ul></div>{% endif %}
+<form method="post" enctype="multipart/form-data">
+<div class="field"><label for="title">Listing title *</label><input id="title" name="title" maxlength="150" required value="{{ form.title if form else '' }}" placeholder="e.g. Clean cardboard boxes"></div>
+<div class="field"><label for="category">Category *</label><select id="category" name="category" required><option value="">Choose a category</option>{% for value, label in [('plastic', 'Plastic'), ('paper', 'Paper'), ('glass', 'Glass'), ('metal', 'Metal'), ('e-waste', 'E-Waste'), ('clothes', 'Clothes')] %}<option value="{{ value }}" {% if form and form.category == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></div>
+<div class="field"><label for="description">Description *</label><textarea id="description" name="description" required placeholder="Describe quantity, size, and any useful details...">{{ form.description if form else '' }}</textarea></div>
+<div class="field"><label for="price">Price (₹) *</label><input id="price" name="price" type="number" min="0" max="99999999.99" step="0.01" required value="{{ form.price if form else '' }}" placeholder="0.00"><div class="hint">Enter a price in rupees with up to two decimal places.</div></div>
+<div class="field"><label for="item_condition">Item condition *</label><select id="item_condition" name="item_condition" required><option value="">Choose condition</option><option value="Used" {% if form and form.item_condition == 'Used' %}selected{% endif %}>Used</option><option value="Damaged" {% if form and form.item_condition == 'Damaged' %}selected{% endif %}>Damaged</option></select></div>
+<div class="field"><label for="image">Item photo (optional)</label><input id="image" name="image" type="file" accept=".png,.jpg,.jpeg,.gif,.webp,image/*"><div class="hint">Supported formats: PNG, JPG, JPEG, GIF, WEBP.</div></div>
+<div class="actions"><button class="btn" type="submit">Publish Listing</button><a class="btn secondary" href="{{ url_for('marketplace') }}">Cancel</a></div>
+</form></section></main></body></html>

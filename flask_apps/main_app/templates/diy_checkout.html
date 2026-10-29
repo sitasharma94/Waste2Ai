@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ 'Request item' if product.price == 0 else 'Checkout' }} - Waste2Value Handmade</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+{% include 'partials/diy_styles.html' %}
+{% include 'partials/diy_order_styles.html' %}
+</head>
+<body>
+{% include 'partials/diy_nav.html' %}
+
+{% set is_free = product.price == 0 %}
+{% macro money(v) %}{% if v == 0 %}₹0{% else %}₹{{ '{:,.2f}'.format(v) }}{% endif %}{% endmacro %}
+
+<main class="page">
+    <div class="wrap">
+        <a href="{{ url_for('diy_marketplace') }}#shop" class="back">← Back to the shop</a>
+
+        {% if blocked %}
+        <div class="box" style="max-width:620px">
+            <h1 class="page-title">Can't check out</h1>
+            <p class="page-sub" role="alert">{{ blocked }}</p>
+            <div class="summary-item">
+                <img src="{{ product.image_url }}" alt="">
+                <div><h3>{{ product.title }}</h3><p>by {{ product.seller }}</p></div>
+            </div>
+            <div class="actions">
+                <a href="{{ url_for('diy_marketplace') }}#shop" class="btn btn-primary">Browse other pieces</a>
+                <a href="{{ url_for('diy_orders') }}" class="btn btn-plain">My Orders</a>
+            </div>
+        </div>
+        {% else %}
+
+        <h1 class="page-title">
+            {% if step == 'review' %}Review your {{ 'request' if is_free else 'order' }}{% else %}{{ 'Request this free item' if is_free else 'Checkout' }}{% endif %}
+        </h1>
+        <p class="page-sub">
+            {% if step == 'review' %}Check everything below. Nothing is ordered until you press “{{ 'Send request' if is_free else 'Place order' }}”.
+            {% else %}Tell us where to deliver this piece. You'll see a full summary before anything is ordered.{% endif %}
+        </p>
+        <ol class="steps-bar" aria-label="Checkout progress">
+            <li class="{{ 'done' if step == 'review' else 'on' }}">1 · Delivery</li>
+            <li class="{{ 'on' if step == 'review' else '' }}">2 · Review</li>
+            <li>3 · {{ 'Requested' if is_free else 'Placed' }}</li>
+        </ol>
+
+        <div class="layout">
+            <div class="stack">
+                {% if errors %}
+                <div class="errors" role="alert"><ul>{% for e in errors %}<li>{{ e }}</li>{% endfor %}</ul></div>
+                {% endif %}
+                {% if notice %}<div class="notice" role="status">{{ notice }}</div>{% endif %}
+
+                {% if step == 'details' %}
+                <form method="POST" action="{{ url_for('diy_checkout', product_id=product.id) }}" class="stack">
+                    {% include 'partials/diy_form_guard.html' %}
+
+                    <section class="box">
+                        <h2>Delivery details</h2>
+                        <div class="grid-2">
+                            <div class="field">
+                                <label for="delivery_name">Full name</label>
+                                <input type="text" id="delivery_name" name="delivery_name" maxlength="100" required autocomplete="name" value="{{ form.delivery_name }}">
+                            </div>
+                            <div class="field">
+                                <label for="delivery_phone">Phone number</label>
+                                <div class="phone-input">
+                                    <span aria-hidden="true">+91</span>
+                                    <input type="tel" id="delivery_phone" name="delivery_phone" maxlength="16" required autocomplete="tel-national" inputmode="numeric" placeholder="10-digit mobile" value="{{ form.delivery_phone }}">
+                                </div>
+                            </div>
+                            <div class="field span-2">
+                                <label for="address_line">House number and street</label>
+                                <input type="text" id="address_line" name="address_line" maxlength="255" required autocomplete="address-line1" placeholder="e.g. 12B, Rose Apartments, MG Road" value="{{ form.address_line }}">
+                            </div>
+                            <div class="field">
+                                <label for="locality">Area / locality</label>
+                                <input type="text" id="locality" name="locality" maxlength="120" required autocomplete="address-line2" value="{{ form.locality }}">
+                            </div>
+                            <div class="field">
+                                <label for="city">City</label>
+                                <input type="text" id="city" name="city" maxlength="80" required autocomplete="address-level2" value="{{ form.city }}">
+                            </div>
+                            <div class="field">
+                                <label for="state">State</label>
+                                <select id="state" name="state" required autocomplete="address-level1">
+                                    <option value="" {% if not form.state %}selected{% endif %} disabled>Choose state</option>
+                                    {% for s in states %}<option value="{{ s }}" {% if form.state == s %}selected{% endif %}>{{ s }}</option>{% endfor %}
+                                </select>
+                            </div>
+                            <div class="field">
+                                <label for="pincode">PIN code</label>
+                                <input type="text" id="pincode" name="pincode" maxlength="6" required inputmode="numeric" pattern="[1-9][0-9]{5}" autocomplete="postal-code" value="{{ form.pincode }}">
+                            </div>
+                            <div class="field span-2">
+                                <label for="delivery_instructions">Delivery instructions <span class="opt">(optional)</span></label>
+                                <textarea id="delivery_instructions" name="delivery_instructions" maxlength="300" placeholder="Landmark, best time to deliver…">{{ form.delivery_instructions }}</textarea>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="box">
+                        {% if is_free %}
+                        <h2>Payment</h2>
+                        <input type="hidden" name="payment_method" value="free">
+                        <div class="info sage"><span aria-hidden="true">🎁</span><div><b>This piece is free. No payment is needed.</b><br>Your request goes to the seller, who can accept or decline it.</div></div>
+                        {% else %}
+                        <fieldset>
+                            <legend><h2>Payment method</h2></legend>
+                            <div class="pay-options">
+                                <label class="pay"><input type="radio" name="payment_method" value="cod" {% if form.payment_method in ('', 'cod') %}checked{% endif %} required>
+                                    <span class="pay-text">Cash on Delivery<small>Pay in cash when it arrives</small></span></label>
+                                {% if simulation_enabled %}
+                                <label class="pay"><input type="radio" name="payment_method" value="demo" {% if form.payment_method == 'demo' %}checked{% endif %}>
+                                    <span class="pay-text">Pay Online<small>Enter your payment reference next</small></span></label>
+                                {% endif %}
+                                {% if online_available %}
+                                {% for key, m in payment_methods.items() if m.online %}
+                                <label class="pay"><input type="radio" name="payment_method" value="{{ key }}" {% if form.payment_method == key %}checked{% endif %}>
+                                    <span class="pay-text">{{ m.label }}<small>Secure checkout by Razorpay</small></span></label>
+                                {% endfor %}
+                                {% endif %}
+                            </div>
+                        </fieldset>
+                        {% if simulation_enabled %}
+                        <p class="field-hint">Pay Online is a presentation flow: it records a <b>simulated payment</b>. No real money is transferred and the order is never marked as genuinely paid.</p>
+                        {% endif %}
+                        {% if online_available %}
+                        <div class="info sage"><span aria-hidden="true">🔒</span><div><b>Online payments are handled by Razorpay.</b> You'll pay on Razorpay's secure checkout window; this site never sees your card number, CVV, UPI PIN or bank password. Your order is only placed once Razorpay confirms the payment.{% if online_test_mode %} <b>Test mode:</b> no real money is charged.{% endif %}</div></div>
+                        {% endif %}
+                        {% endif %}
+                    </section>
+
+                    <div class="actions" style="margin-top:0">
+                        <button type="submit" name="action" value="review" class="btn btn-primary">Review {{ 'request' if is_free else 'order' }} →</button>
+                    </div>
+                </form>
+
+                {% else %}
+                {# ---------- review step ---------- #}
+                <section class="box">
+                    <h2>Deliver to</h2>
+                    <address class="address">
+                        <b>{{ form.delivery_name }}</b> · +91 {{ form.delivery_phone }}<br>
+                        {{ form.address_line }}, {{ form.locality }}<br>
+                        {{ form.city }}, {{ form.state }} {{ form.pincode }}
+                    </address>
+                    {% if form.delivery_instructions %}<div class="info"><span aria-hidden="true">📝</span><div>{{ form.delivery_instructions }}</div></div>{% endif %}
+                </section>
+
+                <section class="box">
+                    <h2>Payment</h2>
+                    <dl class="details">
+                        <dt>Method</dt><dd>{{ payment_labels[form.payment_method] }}</dd>
+                        <dt>When you pay</dt>
+                        <dd>{% if is_free %}Nothing to pay. This is a free item.
+                            {% elif form.payment_method == 'cod' %}{{ money(product.price) }} in cash to the courier when it arrives.
+                            {% elif form.payment_method == 'demo' %}Online, on the next step, by entering a payment reference. This is a <b>simulated payment</b> for presentation: no real money is transferred.
+                            {% else %}{{ money(product.price) }} now, on Razorpay's secure checkout. The order is placed only after Razorpay confirms the payment.{% endif %}</dd>
+                    </dl>
+                </section>
+
+                <form method="POST" action="{{ url_for('diy_checkout', product_id=product.id) }}" class="box">
+                    {% include 'partials/diy_form_guard.html' %}
+                    <input type="hidden" name="expected_price" value="{{ product.price }}">
+                    {% for key in ['delivery_name', 'delivery_phone', 'address_line', 'locality', 'city', 'state', 'pincode', 'delivery_instructions', 'payment_method'] %}
+                    <input type="hidden" name="{{ key }}" value="{{ form[key] }}">
+                    {% endfor %}
+                    <h2>{{ 'Send your request' if is_free else 'Place your order' }}</h2>
+                    <p class="page-sub" style="margin-bottom:16px">
+                        {% if is_free %}The seller will be asked to approve your request. Nothing is confirmed until they do.
+                        {% elif form.payment_method == 'cod' %}This reserves the piece for you. The seller then confirms or declines it, and you'll see the status under My Orders.
+                        {% elif form.payment_method == 'demo' %}Next you'll enter a payment reference to complete the simulated online payment. No real money is transferred.
+                        {% else %}Next you'll pay on Razorpay's secure checkout. The piece is held for you for 30 minutes; once Razorpay confirms the payment, your order goes to the seller to confirm.{% endif %}
+                    </p>
+                    <label class="confirm-line"><input type="checkbox" name="confirm" value="yes" required> I've checked the item, delivery address and {{ 'request' if is_free else 'payment method' }}.</label>
+                    <div class="actions">
+                        <button type="submit" name="action" value="edit" class="btn btn-plain" formnovalidate>← Edit details</button>
+                        <button type="submit" name="action" value="place" class="btn btn-primary">{{ 'Send request' if is_free else ('Place order · ' if form.payment_method == 'cod' else ('Continue to payment · ' if form.payment_method == 'demo' else 'Continue to payment · ')) ~ money(product.price) }}</button>
+                    </div>
+                </form>
+                {% endif %}
+            </div>
+
+            <aside class="box summary" aria-label="Order summary">
+                <h2>Your {{ 'request' if is_free else 'order' }}</h2>
+                <div class="summary-item">
+                    <img src="{{ product.image_url }}" alt="{{ product.title }}">
+                    <div>
+                        <h3>{{ product.title }}</h3>
+                        <p>{{ product.category_label }} · by {{ product.seller }}</p>
+                    </div>
+                </div>
+                <ul class="lines">
+                    <li>Price <b>{{ money(product.price) }}</b></li>
+                    <li>Quantity <b>1</b></li>
+                    <li>Delivery <b>Arranged by the seller</b></li>
+                    {% if step == 'review' %}<li>Payment <b>{{ payment_labels[form.payment_method] }}</b></li>{% endif %}
+                    <li class="total">Total <b>{{ money(product.price) }}</b></li>
+                </ul>
+            </aside>
+        </div>
+        {% endif %}
+    </div>
+</main>
+</body>
+</html>

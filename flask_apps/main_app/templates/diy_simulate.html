@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pay online for {{ order.order_number }} - Waste2Value Handmade</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+{% include 'partials/diy_styles.html' %}
+{% include 'partials/diy_order_styles.html' %}
+</head>
+<body>
+{% include 'partials/diy_nav.html' %}
+
+<main class="page">
+    <div class="wrap">
+        <a href="{{ url_for('diy_order_detail', order_number=order.order_number) }}" class="back">← Order {{ order.order_number }}</a>
+        <h1 class="page-title">Pay online</h1>
+        <p class="page-sub">Enter your payment reference to complete the payment for this order.</p>
+        <ol class="steps-bar" aria-label="Checkout progress">
+            <li class="done">1 · Delivery</li>
+            <li class="done">2 · Review</li>
+            <li class="on">3 · Payment</li>
+            <li>4 · Placed</li>
+        </ol>
+
+        <div class="layout">
+            <div class="stack">
+                {% if simulated_failure %}
+                <div class="errors" role="alert">The payment didn't go through. Nothing was charged; you can try again.</div>
+                {% endif %}
+                <form method="POST" action="{{ url_for('diy_payment_simulation', order_number=order.order_number) }}" class="box">
+                    {% include 'partials/diy_form_guard.html' %}
+                    <h2>Pay {{ '₹{:,.2f}'.format(order.total_amount) }}</h2>
+                    {% if reference_error %}<div class="errors" role="alert">{{ reference_error }}</div>{% endif %}
+                    <div class="field">
+                        <label for="payment_reference">Payment Reference</label>
+                        <input type="text" id="payment_reference" name="payment_reference" maxlength="100" required
+                               autocomplete="off" value="{{ reference or '' }}" placeholder="e.g. UPI or bank transaction reference">
+                    </div>
+                    <p class="field-hint" style="margin:-6px 0 18px"><span class="sim-tag">Simulation</span>&nbsp; This presentation flow records a simulated payment. No real money is transferred and nothing is verified, so the order is never marked as genuinely paid.</p>
+                    <div class="actions" style="margin-top:0">
+                        <button type="submit" name="outcome" value="success" class="btn btn-primary">Pay {{ '₹{:,.2f}'.format(order.total_amount) }}</button>
+                        <a href="{{ url_for('diy_order_detail', order_number=order.order_number) }}" class="btn btn-plain">Back to order</a>
+                    </div>
+                </form>
+            </div>
+
+            <aside class="box summary" aria-label="Order summary">
+                <h2>Your order</h2>
+                <div class="summary-item">
+                    <img src="{{ order.image_url }}" alt="{{ order.product_title }}">
+                    <div><h3>{{ order.product_title }}</h3><p>by {{ order.seller_name }}</p></div>
+                </div>
+                <ul class="lines">
+                    <li>Price <b>{{ '₹{:,.2f}'.format(order.unit_price) }}</b></li>
+                    <li>Quantity <b>1</b></li>
+                    <li>Payment <b>Pay Online</b></li>
+                    <li class="total">Total <b>{{ '₹{:,.2f}'.format(order.total_amount) }}</b></li>
+                </ul>
+            </aside>
+        </div>
+    </div>
+</main>
+</body>
+</html>

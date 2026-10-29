@@ -1,433 +1,361 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Marketplace - Waste2Value</title>
-<style>
-    * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', Arial, sans-serif; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Marketplace | Waste2Value</title>
+    <style>
+        :root {
+            --green: #287a50;
+            --dark-green: #185b3a;
+            --pale-green: #e9f5ec;
+            --cream: #f7f8f1;
+            --text: #23352b;
+            --muted: #68786d;
+            --border: #dce6dd;
+        }
 
-    body { min-height: 100vh; background: #f4f7f5; }
+        * { box-sizing: border-box; }
 
-    /* --- top bar --- */
-    .navbar {
-        background: linear-gradient(135deg, #56ab2f, #2e7d32);
-        padding: 16px 30px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        color: white;
-    }
-    .navbar .logo { font-size: 20px; font-weight: 700; color: white; text-decoration: none; }
-    .navbar .user-info { display: flex; align-items: center; gap: 15px; font-size: 14px; }
-    .navbar a.logout {
-        background: rgba(255,255,255,0.2);
-        color: white;
-        text-decoration: none;
-        padding: 8px 16px;
-        border-radius: 6px;
-        font-size: 13px;
-        font-weight: 600;
-    }
-    .navbar a.logout:hover { background: rgba(255,255,255,0.3); }
+        body {
+            margin: 0;
+            background: var(--cream);
+            color: var(--text);
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
 
-    /* --- tab sub-nav --- */
-    .subnav {
-        background: white;
-        display: flex;
-        justify-content: center;
-        gap: 40px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    }
-    .subnav a {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        padding: 16px 4px;
-        text-decoration: none;
-        color: #888;
-        font-size: 14px;
-        font-weight: 600;
-        border-bottom: 3px solid transparent;
-    }
-    .subnav a.active { color: #2e7d32; border-bottom-color: #2e7d32; }
-    .subnav a:hover { color: #2e7d32; }
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            padding: 16px 6%;
+            background: #fff;
+            border-bottom: 1px solid var(--border);
+        }
 
-    .content { padding: 30px; max-width: 1100px; margin: 0 auto; }
+        .brand {
+            color: var(--dark-green);
+            font-size: 1.15rem;
+            font-weight: 800;
+            text-decoration: none;
+        }
 
-    /* --- AI banner --- */
-    .ai-banner {
-        background: linear-gradient(135deg, #eafaf0, #e3f6e9);
-        border: 1px solid #d7f0dd;
-        border-radius: 16px;
-        padding: 28px 30px;
-        margin-bottom: 26px;
-        display: flex;
-        align-items: center;
-        gap: 26px;
-        flex-wrap: wrap;
-    }
-    .ai-banner-icon-circle {
-        width: 56px;
-        height: 56px;
-        border-radius: 50%;
-        background: #2e7d32;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 26px;
-        flex-shrink: 0;
-    }
-    .ai-banner-text { min-width: 240px; }
-    .ai-banner-text h2 { color: #2e7d32; font-size: 22px; margin-bottom: 6px; }
-    .ai-banner-text p { color: #5a6b5d; font-size: 14px; margin-bottom: 16px; max-width: 460px; }
+        .nav-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
 
-    .ai-banner-form { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+        .nav-links a {
+            color: var(--text);
+            font-weight: 600;
+            text-decoration: none;
+        }
 
-    .btn-outline {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        background: white;
-        border: 1.5px solid #cfe8d4;
-        color: #2e7d32;
-        padding: 11px 18px;
-        border-radius: 10px;
-        font-size: 14px;
-        font-weight: 600;
-        cursor: pointer;
-    }
-    .btn-outline:hover { background: #f3fbf5; }
+        .page {
+            max-width: 1180px;
+            margin: 26px auto;
+            padding: 0 20px;
+        }
 
-    .btn-solid {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        background: linear-gradient(135deg, #56ab2f, #2e7d32);
-        border: none;
-        color: white;
-        padding: 12px 20px;
-        border-radius: 10px;
-        font-size: 14px;
-        font-weight: 700;
-        cursor: pointer;
-    }
-    .btn-solid:hover { opacity: 0.92; }
-    .btn-solid:disabled, .btn-outline:disabled { opacity: 0.55; cursor: not-allowed; }
+        .back-button {
+            display: inline-block;
+            margin-bottom: 18px;
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: white;
+            color: var(--dark-green);
+            font-weight: 700;
+            text-decoration: none;
+        }
 
-    .ai-banner-hint { font-size: 12px; color: #7c8a7e; margin-top: 10px; width: 100%; }
-    .ai-banner-filename { font-size: 12.5px; color: #2e7d32; font-weight: 600; margin-top: 4px; width: 100%; }
+        .hero {
+            margin-bottom: 22px;
+            padding: 28px 30px;
+            border-radius: 20px;
+            background: linear-gradient(120deg, var(--pale-green), #fff);
+        }
 
-    .ai-banner-illustration {
-        margin-left: auto;
-        display: flex;
-        align-items: center;
-        gap: 14px;
-    }
-    .earth-graphic {
-        position: relative;
-        width: 90px;
-        height: 90px;
-        border-radius: 50%;
-        background: radial-gradient(circle at 35% 35%, #90caf9, #42a5f5);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 34px;
-        flex-shrink: 0;
-    }
-    .earth-graphic .leaf { position: absolute; font-size: 22px; }
-    .earth-graphic .leaf.l1 { top: -10px; left: -14px; }
-    .earth-graphic .leaf.l2 { bottom: -8px; right: -16px; transform: scaleX(-1); }
-    .banner-tagline {
-        font-family: 'Brush Script MT', 'Segoe Script', cursive;
-        font-size: 20px;
-        color: #2e7d32;
-        line-height: 1.15;
-        font-style: italic;
-    }
+        .eyebrow { font-size: .9rem; }
 
-    /* --- marketplace header row --- */
-    .marketplace-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 16px;
-        flex-wrap: wrap;
-        gap: 10px;
-    }
-    .marketplace-header h2 { color: #2e7d32; display: flex; align-items: center; gap: 8px; }
+        .hero h1 {
+            margin: 10px 0;
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+        }
 
-    .new-listing-btn {
-        background: linear-gradient(135deg, #56ab2f, #2e7d32);
-        color: white;
-        text-decoration: none;
-        padding: 10px 18px;
-        border-radius: 8px;
-        font-size: 13px;
-        font-weight: 700;
-    }
-    .new-listing-btn:hover { opacity: 0.9; }
+        .hero p {
+            max-width: 740px;
+            color: var(--muted);
+            line-height: 1.6;
+        }
 
-    .filter-form {
-        display: flex;
-        gap: 10px;
-        margin-bottom: 24px;
-        flex-wrap: wrap;
-    }
-    .filter-form input[type="text"] {
-        flex: 1;
-        min-width: 200px;
-        padding: 12px 16px;
-        border: 1.5px solid #e2e6e3;
-        border-radius: 10px;
-        font-size: 14px;
-        background: white;
-    }
-    .filter-form select {
-        padding: 12px 16px;
-        border: 1.5px solid #e2e6e3;
-        border-radius: 10px;
-        font-size: 14px;
-        background: white;
-    }
-    .filter-form button {
-        padding: 12px 20px;
-        background: linear-gradient(135deg, #56ab2f, #2e7d32);
-        color: white;
-        border: none;
-        border-radius: 10px;
-        cursor: pointer;
-        font-size: 14px;
-        font-weight: 700;
-    }
+        .actions, .filters {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 18px;
+        }
 
-    /* --- listing cards --- */
-    .listings-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-        gap: 22px;
-    }
+        .filters { margin: 18px 0 24px; }
 
-    .listing-card {
-        background: white;
-        border-radius: 14px;
-        overflow: hidden;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-        transition: transform 0.2s;
-        text-decoration: none;
-        color: inherit;
-        display: block;
-        position: relative;
-    }
-    .listing-card:hover { transform: translateY(-4px); }
+        .button {
+            display: inline-block;
+            padding: 11px 15px;
+            border: 1px solid transparent;
+            border-radius: 10px;
+            background: var(--green);
+            color: white;
+            font: inherit;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+        }
 
-    .listing-media { position: relative; }
+        .button-secondary {
+            border-color: var(--border);
+            background: white;
+            color: var(--dark-green);
+        }
 
-    .listing-img {
-        width: 100%;
-        height: 160px;
-        object-fit: cover;
-        background: #e8f5e9;
-        display: block;
-    }
-    .no-img {
-        width: 100%;
-        height: 160px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 40px;
-        color: white;
-    }
-    .ph-plastic  { background: linear-gradient(135deg,#64b5f6,#1e88e5); }
-    .ph-paper    { background: linear-gradient(135deg,#d7ccc8,#a1887f); }
-    .ph-cardboard{ background: linear-gradient(135deg,#ffcc80,#fb8c00); }
-    .ph-glass    { background: linear-gradient(135deg,#a5d6a7,#66bb6a); }
-    .ph-metal    { background: linear-gradient(135deg,#b0bec5,#78909c); }
-    .ph-e-waste  { background: linear-gradient(135deg,#4db6ac,#00796b); }
-    .ph-clothes  { background: linear-gradient(135deg,#ce93d8,#8e24aa); }
-    .ph-default  { background: linear-gradient(135deg,#a5d6a7,#66bb6a); }
+        .filters input, .filters select {
+            min-width: 0;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            background: white;
+            font: inherit;
+        }
 
-    .fav-btn {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        width: 30px;
-        height: 30px;
-        border-radius: 50%;
-        background: rgba(255,255,255,0.9);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 15px;
-        cursor: pointer;
-        border: none;
-        color: #999;
-    }
-    .fav-btn.active { color: #e53935; }
+        .filters input { flex: 1; }
 
-    .listing-info { padding: 15px; }
-    .listing-info h3 { font-size: 15px; color: #222; margin-bottom: 6px; }
+        /* Product-card layout similar to the reference screenshot */
+        .listing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
+            gap: 12px;
+            align-items: stretch;
+        }
 
-    .listing-category {
-        display: inline-block;
-        background: #e8f5e9;
-        color: #2e7d32;
-        padding: 3px 10px;
-        border-radius: 20px;
-        font-size: 11px;
-        font-weight: 600;
-        margin-bottom: 8px;
-        text-transform: capitalize;
-    }
+        .listing-card {
+            min-width: 0;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: white;
+            transition: transform .15s ease, box-shadow .15s ease;
+        }
 
-    .listing-price { font-size: 17px; font-weight: 700; color: #2e7d32; }
+        .listing-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(32, 60, 37, .10);
+        }
 
-    .empty-state { text-align: center; padding: 60px 20px; color: #999; }
-    .empty-state .icon { font-size: 50px; margin-bottom: 15px; }
-</style>
+        .image-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 142px;
+            overflow: hidden;
+            background: #f0f5f0;
+        }
+
+        .listing-image {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: 5px;
+        }
+
+        .listing-content {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 10px 11px 12px;
+        }
+
+        .listing-title {
+            display: -webkit-box;
+            width: 100%;
+            min-height: 2.8em;
+            margin: 0 0 6px;
+            overflow: hidden;
+            color: #173d2a;
+            font-size: .98rem;
+            font-weight: 650;
+            line-height: 1.4;
+            overflow-wrap: anywhere;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+        }
+
+        .listing-meta {
+            width: 100%;
+            margin: 0;
+            overflow: hidden;
+            color: var(--muted);
+            font-size: .83rem;
+            line-height: 1.4;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .listing-price {
+            margin: 8px 0 4px;
+            color: #202820;
+            font-size: 1rem;
+            font-weight: 800;
+        }
+
+        .seller-name {
+            margin: 0 0 10px;
+            color: var(--muted);
+            font-size: .84rem;
+            overflow-wrap: anywhere;
+        }
+
+        .details-button {
+            display: block;
+            width: 100%;
+            margin-top: auto;
+            padding: 8px 9px;
+            border-radius: 8px;
+            background: var(--green);
+            color: white;
+            font-size: .88rem;
+            font-weight: 700;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .empty-state {
+            padding: 32px 20px;
+            border: 1px dashed #b7cbb9;
+            border-radius: 15px;
+            background: white;
+            text-align: center;
+        }
+
+        .empty-state p {
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        @media (min-width: 1000px) {
+            .listing-grid {
+                grid-template-columns: repeat(5, minmax(0, 1fr));
+                gap: 12px;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .listing-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: 10px;
+            }
+            .image-wrap { height: 120px; }
+            .listing-content { padding: 9px; }
+            .listing-title { font-size: .91rem; }
+            .listing-price { font-size: .95rem; }
+        }
+
+        @media (max-width: 480px) {
+            .navbar { align-items: flex-start; }
+            .nav-links { gap: 10px; }
+            .page { padding: 0 12px; }
+            .hero { padding: 20px; }
+            .filters > * { width: 100%; }
+            .listing-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .image-wrap { height: 125px; }
+        }
+    </style>
 </head>
 <body>
-
-<div class="navbar">
-    <a href="/dashboard" class="logo">♻️ Waste2Value</a>
-    <div class="user-info">
-        {% if user_name %}<span>{{ user_name }}</span>{% endif %}
-        <a href="/logout" class="logout">Logout</a>
-    </div>
-</div>
-
-<div class="subnav">
-    <a href="/marketplace" class="active">🛒 Marketplace</a>
-    <a href="/my-listings">📋 My Listings</a>
-    <a href="/profile">👤 Profile</a>
-</div>
-
-<div class="content">
-    <div class="ai-banner">
-        <div class="ai-banner-icon-circle">♻️</div>
-
-        <div class="ai-banner-text">
-            <h2>AI Recycling Assistant</h2>
-            <p>Upload a waste image to identify the material and get recycling, DIY and safety guidance.</p>
-
-            <form class="ai-banner-form" method="POST" action="/ai-assistant/analyze" enctype="multipart/form-data" id="quickAnalyzeForm">
-                <input type="file" name="image" id="quickImageInput" accept="image/*" style="display:none;">
-                <button type="button" class="btn-outline" id="chooseImageBtn">📷 Choose Waste Image</button>
-                <button type="submit" class="btn-solid" id="analyzeBtn" disabled>✨ Analyze Waste</button>
-                <div class="ai-banner-filename" id="chosenFileName"></div>
-            </form>
-            <div class="ai-banner-hint">JPG, JPEG, PNG or WEBP · maximum 8 MB</div>
+    <nav class="navbar">
+        <a class="brand" href="{{ url_for('dashboard') }}">♻ Waste2Value</a>
+        <div class="nav-links">
+            <a href="{{ url_for('dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('marketplace') }}">Marketplace</a>
+            <a href="{{ url_for('my_listings') }}">My Listings</a>
+            <a href="{{ url_for('offers') }}">Offers</a>
         </div>
+    </nav>
 
-        <div class="ai-banner-illustration">
-            <div class="earth-graphic">
-                🌍
-                <span class="leaf l1">🍃</span>
-                <span class="leaf l2">🍃</span>
+    <main class="page">
+        <a class="back-button" href="{{ url_for('dashboard') }}">← Back to Dashboard</a>
+
+        <section class="hero">
+            <span class="eyebrow">WASTE-TO-VALUE MARKETPLACE</span>
+            <h1>Find materials. Create value. 🌱</h1>
+            <p>
+                Discover reusable and recyclable materials, or list items you no longer need
+                so someone else can put them to good use.
+            </p>
+            <div class="actions">
+                <a class="button" href="{{ url_for('new_listing') }}">＋ Create Listing</a>
+                <a class="button button-secondary" href="{{ url_for('my_listings') }}">My Listings</a>
+                <a class="button button-secondary" href="{{ url_for('offers') }}">View Offers</a>
             </div>
-            <div class="banner-tagline">Small Steps<br>Big Impact</div>
-        </div>
-    </div>
+        </section>
 
-    <div class="marketplace-header">
-        <h2>🛒 Marketplace</h2>
-        <a href="/listing/new" class="new-listing-btn">+ New Listing</a>
-    </div>
+        <form class="filters" method="get" action="{{ url_for('marketplace') }}">
+            <input type="search" name="search" placeholder="Search materials..."
+                   value="{{ search_query or '' }}" aria-label="Search materials">
+            <select name="category" aria-label="Filter by category">
+                <option value="">All categories</option>
+                {% for value, label in [('plastic', 'Plastic'), ('paper', 'Paper'), ('glass', 'Glass'), ('metal', 'Metal'), ('e-waste', 'E-Waste'), ('clothes', 'Clothes')] %}
+                    <option value="{{ value }}" {% if selected_category == value %}selected{% endif %}>
+                        {{ label }}
+                    </option>
+                {% endfor %}
+            </select>
+            <button class="button" type="submit">Search</button>
+            <a class="button button-secondary" href="{{ url_for('marketplace') }}">Clear</a>
+        </form>
 
-    <form class="filter-form" method="GET" action="/marketplace">
-        <input type="text" name="search" placeholder="Search items..." value="{{ search_query or '' }}">
-        <select name="category">
-            <option value="">All Categories</option>
-            <option value="plastic" {% if selected_category == 'plastic' %}selected{% endif %}>Plastic</option>
-            <option value="paper" {% if selected_category == 'paper' %}selected{% endif %}>Paper</option>
-            <option value="glass" {% if selected_category == 'glass' %}selected{% endif %}>Glass</option>
-            <option value="metal" {% if selected_category == 'metal' %}selected{% endif %}>Metal</option>
-            <option value="e-waste" {% if selected_category == 'e-waste' %}selected{% endif %}>E-Waste</option>
-            <option value="clothes" {% if selected_category == 'clothes' %}selected{% endif %}>Clothes</option>
-        </select>
-        <button type="submit">🔍 Filter</button>
-    </form>
+        {% if listings %}
+            <section class="listing-grid" aria-label="Available listings">
+                {% for item in listings %}
+                    <article class="listing-card">
+                        <div class="image-wrap">
+                            {% if item[7] %}
+                                <img class="listing-image"
+                                     src="{{ url_for('static', filename='uploads/' ~ item[7]) }}"
+                                     alt="{{ item[2] }}">
+                            {% else %}
+                                <img class="listing-image"
+                                     src="https://placehold.co/400x300/e9f5ec/287a50?text=Reuse+%26+Recycle"
+                                     alt="Reusable material">
+                            {% endif %}
+                        </div>
 
-    {% set category_icons = {'plastic': '🧴', 'paper': '📰', 'cardboard': '📦', 'glass': '🫙', 'metal': '🔩', 'e-waste': '💻', 'clothes': '👕'} %}
-    {% if listings %}
-    <div class="listings-grid">
-        {% for item in listings %}
-        <div class="listing-card">
-            <a href="/listing/{{ item[0] }}" style="text-decoration:none; color:inherit;">
-                <div class="listing-media">
-                    {% if item[7] %}
-                        <img class="listing-img" src="{{ url_for('static', filename='uploads/' + item[7]) }}">
-                    {% else %}
-                        <div class="no-img ph-{{ item[3]|lower }}{% if item[3]|lower not in category_icons %} ph-default{% endif %}">{{ category_icons.get(item[3]|lower, '♻️') }}</div>
-                    {% endif %}
-                </div>
-                <div class="listing-info">
-                    <span class="listing-category">{{ item[3] }}</span>
-                    <h3>{{ item[2] }}</h3>
-                    <div class="listing-price">₹{{ item[5] }}</div>
-                </div>
-            </a>
-            <button class="fav-btn" data-id="{{ item[0] }}" onclick="toggleFav(event, this)">♡</button>
-        </div>
-        {% endfor %}
-    </div>
-    {% else %}
-    <div class="empty-state">
-        <div class="icon">📭</div>
-        <p>No listings found. Try a different search or be the first to post one!</p>
-    </div>
-    {% endif %}
-</div>
-
-<script>
-    // Wire up the "Choose Waste Image" / "Analyze Waste" mini-flow in the banner.
-    const chooseBtn = document.getElementById('chooseImageBtn');
-    const quickInput = document.getElementById('quickImageInput');
-    const analyzeBtn = document.getElementById('analyzeBtn');
-    const chosenFileName = document.getElementById('chosenFileName');
-
-    chooseBtn.addEventListener('click', () => quickInput.click());
-
-    quickInput.addEventListener('change', () => {
-        if (quickInput.files.length > 0) {
-            chosenFileName.textContent = '✅ Selected: ' + quickInput.files[0].name;
-            analyzeBtn.disabled = false;
-        } else {
-            chosenFileName.textContent = '';
-            analyzeBtn.disabled = true;
-        }
-    });
-
-    // Decorative wishlist heart -- stored per-browser only (no backend yet).
-    function toggleFav(evt, btn) {
-        evt.preventDefault();
-        evt.stopPropagation();
-        const id = btn.dataset.id;
-        const key = 'w2v_favorites';
-        let favs = JSON.parse(localStorage.getItem(key) || '[]');
-        if (favs.includes(id)) {
-            favs = favs.filter(f => f !== id);
-            btn.classList.remove('active');
-            btn.textContent = '♡';
-        } else {
-            favs.push(id);
-            btn.classList.add('active');
-            btn.textContent = '♥';
-        }
-        localStorage.setItem(key, JSON.stringify(favs));
-    }
-
-    (function initFavs() {
-        const favs = JSON.parse(localStorage.getItem('w2v_favorites') || '[]');
-        document.querySelectorAll('.fav-btn').forEach(btn => {
-            if (favs.includes(btn.dataset.id)) {
-                btn.classList.add('active');
-                btn.textContent = '♥';
-            }
-        });
-    })();
-</script>
-
+                        <div class="listing-content">
+                            <h2 class="listing-title">{{ item[2] }}</h2>
+                            <p class="listing-meta">
+                                {{ item[3]|title }}{% if item[6] %} · {{ item[6] }}{% endif %}
+                            </p>
+                            <p class="listing-price">₹{{ '%.2f'|format(item[5]|float) }}</p>
+                            <p class="seller-name">Waste2Value Marketplace</p>
+                            <a class="details-button"
+                               href="{{ url_for('listing_detail', listing_id=item[0]) }}">
+                                View Details
+                            </a>
+                        </div>
+                    </article>
+                {% endfor %}
+            </section>
+        {% else %}
+            <section class="empty-state">
+                <h2>No listings found</h2>
+                <p>Try another search or category, or create a new listing.</p>
+                <a class="button" href="{{ url_for('new_listing') }}">Create Listing</a>
+            </section>
+        {% endif %}
+    </main>
 </body>
 </html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My Orders - Waste2Value Handmade</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+{% include 'partials/diy_styles.html' %}
+{% include 'partials/diy_order_styles.html' %}
+</head>
+<body>
+{% include 'partials/diy_nav.html' %}
+
+<main class="page">
+    <div class="wrap" style="max-width:920px">
+        <a href="{{ url_for('diy_marketplace') }}#shop" class="back">← Back to the shop</a>
+        <h1 class="page-title">My Orders</h1>
+        <p class="page-sub">Pieces you've bought, and orders other people have placed for your creations.</p>
+
+        <nav class="tabs" aria-label="Order type">
+            <a href="{{ url_for('diy_orders') }}" {% if view == 'purchases' %}aria-current="page"{% endif %}>My purchases</a>
+            <a href="{{ url_for('diy_orders', view='sales') }}" {% if view == 'sales' %}aria-current="page"{% endif %}>
+                Orders for my products {% if awaiting %}<span class="badge" title="Waiting for your response">{{ awaiting }}</span>{% endif %}
+            </a>
+        </nav>
+
+        {% if orders %}
+        <ul class="order-list">
+            {% for o in orders %}
+            <li>
+                <a class="order-row" href="{{ url_for('diy_order_detail', order_number=o.order_number) }}">
+                    <img src="{{ o.image_url }}" alt="" loading="lazy">
+                    <div>
+                        <h3>{{ o.product_title }}</h3>
+                        <div class="meta">
+                            {{ o.order_number }} · {{ o.created_label }}<br>
+                            {% if view == 'sales' %}Buyer: {{ o.buyer_name }}{% else %}Seller: {{ o.seller_name }}{% endif %}
+                            · {{ o.payment_method_label }}
+                        </div>
+                    </div>
+                    <div class="right">
+                        <span class="amount">{% if o.total_amount == 0 %}Free{% else %}₹{{ '{:,.2f}'.format(o.total_amount) }}{% endif %}</span>
+                        <span class="status st-{{ o.status }}">
+                            {% if view == 'sales' and o.status == 'placed' %}Needs your response
+                            {% elif view == 'purchases' and o.status == 'pending_payment' %}Payment needed
+                            {% else %}{{ o.status_label }}{% endif %}
+                        </span>
+                    </div>
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <div class="empty">
+            <h3>{{ 'No orders for your products yet' if view == 'sales' else "You haven't ordered anything yet" }}</h3>
+            <p>{{ 'When someone buys one of your creations, it will appear here for you to confirm.' if view == 'sales' else 'Find something lovely in the handmade collection.' }}</p>
+            <a href="{{ url_for('diy_marketplace') }}#{{ 'sell' if view == 'sales' else 'shop' }}" class="btn btn-primary">{{ 'Sell a creation' if view == 'sales' else 'Browse the shop' }}</a>
+        </div>
+        {% endif %}
+    </div>
+</main>
+</body>
+</html>

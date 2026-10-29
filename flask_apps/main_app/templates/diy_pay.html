@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pay for {{ order.order_number }} - Waste2Value Handmade</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+{% include 'partials/diy_styles.html' %}
+{% include 'partials/diy_order_styles.html' %}
+</head>
+<body>
+{% include 'partials/diy_nav.html' %}
+
+<main class="page">
+    <div class="wrap">
+        <a href="{{ url_for('diy_order_detail', order_number=order.order_number) }}" class="back">← Order {{ order.order_number }}</a>
+        <h1 class="page-title">Complete your payment</h1>
+        <p class="page-sub">Your order isn't placed until Razorpay confirms the payment. The piece is held for you for {{ window_minutes }} minutes.</p>
+        <ol class="steps-bar" aria-label="Checkout progress">
+            <li class="done">1 · Delivery</li>
+            <li class="done">2 · Review</li>
+            <li class="on">3 · Payment</li>
+            <li>4 · Placed</li>
+        </ol>
+
+        <div class="layout">
+            <div class="stack">
+                <section class="box">
+                    <h2>Pay {{ '₹{:,.2f}'.format(order.total_amount) }} with {{ order.payment_method_label }}</h2>
+                    {% if available %}
+                    <p class="page-sub" style="margin-bottom:6px">You'll complete the payment in Razorpay's secure window. This site never sees your card number, CVV, UPI PIN or bank password.</p>
+                    {% if test_mode %}<div class="info"><span aria-hidden="true">🧪</span><div><b>Test mode.</b> No real money is charged. Use Razorpay's test cards or test UPI IDs.</div></div>{% endif %}
+                    <div class="errors" id="payError" role="alert" hidden></div>
+                    <div class="actions">
+                        <button type="button" class="btn btn-primary" id="payBtn">Pay {{ '₹{:,.2f}'.format(order.total_amount) }} securely</button>
+                        <form method="POST" action="{{ url_for('diy_payment_refresh', order_number=order.order_number) }}">
+                            {% include 'partials/diy_form_guard.html' %}
+                            <button type="submit" class="btn btn-plain">Check payment status</button>
+                        </form>
+                    </div>
+                    {% else %}
+                    <div class="errors" role="alert">{{ reason }} You haven't been charged. You can cancel this order from the order page and choose Cash on Delivery instead.</div>
+                    {% endif %}
+                </section>
+
+                {# Filled in by Razorpay's handler and posted to the server, which verifies the
+                   signature with the secret key and asks Razorpay directly before marking anything paid. #}
+                <form method="POST" action="{{ url_for('diy_payment_verify', order_number=order.order_number) }}" id="verifyForm" hidden>
+                    {% include 'partials/diy_form_guard.html' %}
+                    <input type="hidden" name="razorpay_payment_id">
+                    <input type="hidden" name="razorpay_order_id">
+                    <input type="hidden" name="razorpay_signature">
+                </form>
+            </div>
+
+            <aside class="box summary" aria-label="Order summary">
+                <h2>Your order</h2>
+                <div class="summary-item">
+                    <img src="{{ order.image_url }}" alt="{{ order.product_title }}">
+                    <div><h3>{{ order.product_title }}</h3><p>by {{ order.seller_name }}</p></div>
+                </div>
+                <ul class="lines">
+                    <li>Price <b>{{ '₹{:,.2f}'.format(order.unit_price) }}</b></li>
+                    <li>Quantity <b>1</b></li>
+                    <li>Deliver to <b>{{ order.city }}, {{ order.pincode }}</b></li>
+                    <li class="total">Total <b>{{ '₹{:,.2f}'.format(order.total_amount) }}</b></li>
+                </ul>
+            </aside>
+        </div>
+    </div>
+</main>
+
+{% if available %}
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+(function () {
+    var verify = document.getElementById('verifyForm');
+    var errorBox = document.getElementById('payError');
+    var options = {
+        key: {{ key_id|tojson }},                 // public key id only; the secret never leaves the server
+        amount: {{ amount_paise|tojson }},         // in paise, from the order's database price
+        currency: {{ currency|tojson }},
+        order_id: {{ order.provider_order_id|tojson }},
+        name: 'Waste2Value Handmade',
+        description: {{ (order.product_title ~ ' · ' ~ order.order_number)|tojson }},
+        prefill: { name: {{ order.delivery_name|tojson }}, contact: {{ ('+91' ~ order.delivery_phone)|tojson }}{% if rzp_method %}, method: {{ rzp_method|tojson }}{% endif %} },
+        notes: { order_number: {{ order.order_number|tojson }} },
+        theme: { color: '#4f5d46' },
+        handler: function (response) {
+            // Hand the result to the server for verification; the browser never marks anything paid.
+            verify.razorpay_payment_id.value = response.razorpay_payment_id;
+            verify.razorpay_order_id.value = response.razorpay_order_id;
+            verify.razorpay_signature.value = response.razorpay_signature;
+            verify.submit();
+        },
+        modal: {
+            ondismiss: function () {
+                errorBox.textContent = 'Payment window closed. You have not been charged; you can try again.';
+                errorBox.hidden = false;
+            }
+        }
+    };
+    var rzp = new Razorpay(options);
+    rzp.on('payment.failed', function (response) {
+        errorBox.textContent = 'Payment failed: ' + ((response.error && response.error.description) || 'please try again') + '. You can retry or use another method.';
+        errorBox.hidden = false;
+    });
+    document.getElementById('payBtn').addEventListener('click', function (e) {
+        e.preventDefault();
+        errorBox.hidden = true;
+        rzp.open();
+    });
+})();
+</script>
+{% endif %}
+</body>
+</html>

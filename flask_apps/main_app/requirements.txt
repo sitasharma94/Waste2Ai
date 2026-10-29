@@ -1,6 +1,5 @@
 Flask
 Flask-MySQLdb
 Flask-Bcrypt
-opencv-python-headless
-numpy
 python-dotenv
+razorpay>=2.0,<3

@@ -1,152 +1,484 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Dashboard - Waste2Value</title>
-<style>
-    * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', Arial, sans-serif; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Waste2Value</title>
 
-    body {
-        min-height: 100vh;
-        background: #f4f7f5;
-    }
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    .navbar {
-        background: linear-gradient(135deg, #56ab2f, #2e7d32);
-        padding: 16px 30px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        color: white;
-    }
+    <style>
+        :root {
+            --cream: #faf6ef;
+            --white: #fffdf9;
+            --sage: #8a9a7b;
+            --dark-green: #4f5d46;
+            --mint: #e7ebe0;
+            --terracotta: #c8775a;
+            --text: #352d27;
+            --muted: #766c64;
+            --border: #e9dfd1;
+            --shadow: 0 12px 32px rgba(65, 52, 39, .07);
+        }
 
-    .navbar .logo {
-        font-size: 20px;
-        font-weight: 700;
-    }
+        * {
+            box-sizing: border-box;
+        }
 
-    .navbar .user-info {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        font-size: 14px;
-    }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: var(--cream);
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+        }
 
-    .navbar a {
-        background: rgba(255,255,255,0.2);
-        color: white;
-        text-decoration: none;
-        padding: 8px 16px;
-        border-radius: 6px;
-        font-size: 13px;
-        font-weight: 600;
-    }
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
 
-    .navbar a:hover { background: rgba(255,255,255,0.3); }
+        .navbar {
+            min-height: 78px;
+            padding: 14px 6.5%;
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
 
-    .content {
-        padding: 40px 30px;
-        max-width: 1000px;
-        margin: 0 auto;
-    }
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--dark-green);
+            font-family: 'Fraunces', serif;
+            font-size: 29px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
 
-    .welcome-card {
-        background: white;
-        padding: 30px;
-        border-radius: 16px;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-        margin-bottom: 25px;
-    }
+        .brand-icon {
+            font-family: sans-serif;
+            font-size: 28px;
+        }
 
-    .welcome-card h2 {
-        color: #2e7d32;
-        margin-bottom: 8px;
-    }
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
 
-    .welcome-card p {
-        color: #777;
-        font-size: 14px;
-    }
+        .nav-user {
+            font-size: 14px;
+            font-weight: 700;
+        }
 
-    .badge {
-        display: inline-block;
-        background: #e8f5e9;
-        color: #2e7d32;
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 600;
-        margin-top: 10px;
-        text-transform: capitalize;
-    }
+        .logout {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 13px 24px;
+            border-radius: 30px;
+            background: var(--terracotta);
+            color: white;
+            font-size: 14px;
+            font-weight: 700;
+            transition: background .2s;
+        }
 
-    .grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 20px;
-    }
+        .logout:hover {
+            background: #ad6248;
+        }
 
-    .card {
-        background: white;
-        padding: 25px;
-        border-radius: 14px;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-        text-align: center;
-        transition: transform 0.2s;
-        display: block;
-        text-decoration: none;
-        color: inherit;
-    }
+        .page {
+            width: calc(100% - 48px);
+            max-width: 1260px;
+            margin: 0 auto;
+            padding-bottom: 65px;
+        }
 
-    .card:hover { transform: translateY(-4px); }
+        /* Welcome banner */
+        .welcome-banner {
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            min-height: 305px;
+            margin: 52px 0 46px;
+            padding: 42px 44px;
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            box-shadow: var(--shadow);
+        }
 
-    .card .icon { font-size: 32px; margin-bottom: 12px; }
+        .welcome-content {
+            position: relative;
+            z-index: 1;
+            max-width: 1000px;
+        }
 
-    .card h3 { font-size: 16px; color: #333; margin-bottom: 6px; }
+        .welcome-label {
+            display: block;
+            margin-bottom: 17px;
+            color: #b86143;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
 
-    .card p { font-size: 13px; color: #888; }
-</style>
+        .welcome-title {
+            margin: 0 0 12px;
+            color: var(--dark-green);
+            font-family: 'Fraunces', serif;
+            font-size: clamp(30px, 3.2vw, 46px);
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        .wave {
+            display: inline-block;
+            font-family: sans-serif;
+            font-size: .8em;
+        }
+
+        .welcome-description {
+            max-width: 720px;
+            margin: 0 0 20px;
+            color: var(--muted);
+            font-size: 16px;
+            line-height: 1.8;
+        }
+
+        .role-badge {
+            display: inline-block;
+            padding: 9px 18px;
+            border-radius: 25px;
+            background: var(--mint);
+            color: var(--dark-green);
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .welcome-decoration {
+            position: absolute;
+            top: 30px;
+            right: 35px;
+            color: #f0f0e9;
+            font-size: 150px;
+            line-height: 1;
+            transform: rotate(-15deg);
+            pointer-events: none;
+        }
+
+        /* Dashboard heading */
+        .section-intro {
+            margin-bottom: 25px;
+        }
+
+        .section-intro h2 {
+            margin: 0 0 5px;
+            color: #30251e;
+            font-family: 'Fraunces', serif;
+            font-size: 29px;
+            font-weight: 600;
+        }
+
+        .section-intro p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        /* Dashboard cards */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 22px;
+        }
+
+        .dashboard-card {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            min-height: 275px;
+            padding: 29px 26px;
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            box-shadow: var(--shadow);
+            transition: transform .2s, box-shadow .2s, border-color .2s;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-4px);
+            border-color: #d8c7b2;
+            box-shadow: 0 17px 38px rgba(65, 52, 39, .11);
+        }
+
+        .card-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 66px;
+            height: 66px;
+            margin-bottom: 25px;
+            border-radius: 19px;
+            background: var(--mint);
+            font-size: 30px;
+        }
+
+        .card-icon.terracotta {
+            background: #f6e4da;
+        }
+
+        .card-icon.sand {
+            background: #f3ecdf;
+        }
+
+        .dashboard-card h3 {
+            margin: 0 0 10px;
+            color: #30251e;
+            font-family: 'Fraunces', serif;
+            font-size: 22px;
+            font-weight: 600;
+            line-height: 1.35;
+        }
+
+        .dashboard-card p {
+            margin: 0 0 20px;
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.75;
+        }
+
+        .card-link {
+            margin-top: auto;
+            color: var(--dark-green);
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .dashboard-card:hover .card-link {
+            color: var(--terracotta);
+        }
+
+        .footer {
+            padding: 22px 16px;
+            border-top: 1px solid var(--border);
+            color: var(--muted);
+            text-align: center;
+            font-size: 12px;
+        }
+
+        @media (max-width: 900px) {
+            .cards {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .welcome-banner {
+                min-height: 270px;
+            }
+
+            .dashboard-card {
+                min-height: 255px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .navbar {
+                padding: 15px 18px;
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 13px;
+            }
+
+            .brand {
+                font-size: 25px;
+            }
+
+            .nav-right {
+                width: 100%;
+                justify-content: space-between;
+                gap: 8px;
+            }
+
+            .nav-user {
+                font-size: 12px;
+                overflow-wrap: anywhere;
+            }
+
+            .logout {
+                padding: 10px 17px;
+                font-size: 12px;
+            }
+
+            .page {
+                width: calc(100% - 32px);
+                padding-bottom: 40px;
+            }
+
+            .welcome-banner {
+                min-height: 0;
+                margin: 28px 0 34px;
+                padding: 29px 23px;
+                border-radius: 22px;
+            }
+
+            .welcome-label {
+                font-size: 11px;
+                letter-spacing: 1.5px;
+            }
+
+            .welcome-title {
+                font-size: 29px;
+            }
+
+            .welcome-description {
+                font-size: 14px;
+            }
+
+            .welcome-decoration {
+                top: 14px;
+                right: 8px;
+                font-size: 76px;
+                opacity: .65;
+            }
+
+            .section-intro h2 {
+                font-size: 25px;
+            }
+
+            .cards {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .dashboard-card {
+                min-height: 230px;
+                padding: 24px;
+            }
+
+            .card-icon {
+                margin-bottom: 19px;
+            }
+        }
+    </style>
 </head>
+
 <body>
 
-<div class="navbar">
-    <div class="logo">♻️ Waste2Value</div>
-    <div class="user-info">
-        <span>{{ user_name }}</span>
-        <a href="/logout">Logout</a>
-    </div>
-</div>
+    {% set role = (session.get('user_role') or '')|lower %}
+    {% set name = user_name or session.get('user_name') or session.get('username') or 'User' %}
 
-<div class="content">
-    <div class="welcome-card">
-        <h2>Welcome back, {{ user_name }} 👋</h2>
-        <p>Here's what's happening with your account today.</p>
-        <span class="badge">{{ user_role }}</span>
-    </div>
+    <header class="navbar">
+        <a class="brand" href="{{ url_for('dashboard') }}">
+            <span class="brand-icon">♻️</span>
+            <span>Waste2Value</span>
+        </a>
 
-    <div class="grid">
-        <a href="/marketplace" class="card">
-            <div class="icon">🛒</div>
-            <h3>Marketplace</h3>
-            <p>Browse recyclable items</p>
-        </a>
-        <a href="/my-listings" class="card">
-            <div class="icon">📦</div>
-            <h3>My Listings</h3>
-            <p>Manage your posted items</p>
-        </a>
-        <a href="/offers" class="card">
-            <div class="icon">💰</div>
-            <h3>My Offers</h3>
-            <p>Track offers sent & received</p>
-        </a>
-        <a href="/profile" class="card">
-            <div class="icon">👤</div>
-            <h3>Profile</h3>
-            <p>Update your account info</p>
-        </a>
-    </div>
-</div>
+        <div class="nav-right">
+            <span class="nav-user">Hi, {{ name|upper }}</span>
+            <a class="logout" href="{{ url_for('logout') }}">Logout</a>
+        </div>
+    </header>
+
+    <main class="page">
+
+        <!-- Welcome banner -->
+        <section class="welcome-banner">
+            <div class="welcome-content">
+                <span class="welcome-label">A GREENER WAY OF LIVING</span>
+
+                <h1 class="welcome-title">
+                    Welcome back, {{ name|upper }}
+                    <span class="wave">👋</span>
+                </h1>
+
+                <p class="welcome-description">
+                    Here's what's happening with your account today.
+                    Explore recycling ideas, discover products, and give
+                    waste a new life.
+                </p>
+
+                <span class="role-badge">
+                    {{ role|title if role else 'User' }}
+                </span>
+            </div>
+
+            <div class="welcome-decoration" aria-hidden="true">♻</div>
+        </section>
+
+        <!-- Section heading -->
+        <section class="section-intro">
+            <h2>Explore Waste2Value</h2>
+            <p>Choose a section to get started.</p>
+        </section>
+
+        <section class="cards">
+
+            <!-- Buyer and seller -->
+            <a href="{{ url_for('marketplace') }}" class="dashboard-card">
+                <div class="card-icon">🛒</div>
+                <h3>Marketplace</h3>
+                <p>Browse recyclable items and explore available listings.</p>
+                <span class="card-link">Explore marketplace →</span>
+            </a>
+
+            <!-- Buyer and seller -->
+            <a href="{{ url_for('recycle') }}" class="dashboard-card">
+                <div class="card-icon terracotta">♻️</div>
+                <h3>DIY Recycling Ideas</h3>
+                <p>Turn everyday waste into something useful and creative.</p>
+                <span class="card-link">Discover ideas →</span>
+            </a>
+
+            <!-- Buyer and seller -->
+            <a href="{{ url_for('diy_marketplace') }}" class="dashboard-card">
+                <div class="card-icon sand">🧺</div>
+                <h3>Handmade Shop</h3>
+                <p>Buy and sell handmade products and upcycled creations.</p>
+                <span class="card-link">Visit handmade shop →</span>
+            </a>
+
+            <!-- Seller only -->
+            {% if role == 'seller' %}
+            <a href="{{ url_for('my_listings') }}" class="dashboard-card">
+                <div class="card-icon">📦</div>
+                <h3>My Listings</h3>
+                <p>View and manage the items you have posted.</p>
+                <span class="card-link">Manage listings →</span>
+            </a>
+            {% endif %}
+
+            <!-- Offers endpoint corrected to 'offers' -->
+            <a href="{{ url_for('offers') }}" class="dashboard-card">
+                <div class="card-icon terracotta">💰</div>
+                <h3>My Offers</h3>
+                <p>Track offers you have sent and received.</p>
+                <span class="card-link">View offers →</span>
+            </a>
+
+            <!-- Profile -->
+            <a href="{{ url_for('profile') }}" class="dashboard-card">
+                <div class="card-icon sand">👤</div>
+                <h3>Profile</h3>
+                <p>View and update your account information.</p>
+                <span class="card-link">View profile →</span>
+            </a>
+
+        </section>
+    </main>
+
+    <footer class="footer">
+        © Waste2Value · Give waste a second life.
+    </footer>
 
 </body>
 </html>

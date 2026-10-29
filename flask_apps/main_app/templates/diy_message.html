@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ title }} - Waste2Value Handmade</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+{% include 'partials/diy_styles.html' %}
+{% include 'partials/diy_order_styles.html' %}
+</head>
+<body>
+{% include 'partials/diy_nav.html' %}
+<main class="page">
+    <div class="wrap">
+        <div class="box" style="max-width:640px">
+            <h1 class="page-title">{{ title }}</h1>
+            <p class="page-sub" role="alert">{{ message }}</p>
+            <div class="actions">
+                <a href="{{ url_for('diy_marketplace') }}#shop" class="btn btn-primary">Back to the shop</a>
+                {% if session.user_id %}<a href="{{ url_for('diy_orders') }}" class="btn btn-plain">My Orders</a>{% endif %}
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>
